@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Validador de documentos UBL (Universal Business Language) en formato XML">
+    <title>Validador UBL - Documentos XML</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>🔍 Validador UBL</h1>
+            <p>Valida documentos UBL de forma rápida y precisa</p>
+        </header>
+        
+        <form>
+            <label for="fileInput">Cargar archivo XML UBL</label>
+            <fieldset class="file-upload-area" id="fileUploadArea">
+                <input 
+                    type="file" 
+                    id="fileInput" 
+                    accept=".xml,text/xml"
+                    class="file-input"
+                >
+                <section class="file-upload-content">
+                    <span class="file-icon">📄</span>
+                    <p>Haz clic para seleccionar tu archivo XML</p>
+                </section>
+                <section class="file-info" id="fileInfo" style="display: none;">
+                    <span class="file-name" id="fileName"></span>
+                </section>
+            </fieldset>
+            <small class="help-text">
+                El documento debe contener: Invoice, ID, IssueDate y AccountingSupplierParty
+            </small>
+            
+            <section class="button-group">
+                <button type="button" class="button" onclick="validar()">
+                    Validar Documento
+                </button>
+                <button 
+                    type="button" 
+                    class="button button-secondary" 
+                    onclick="clearFile()"
+                    id="clearButton"
+                    style="display: none;"
+                >
+                    Limpiar Archivo
+                </button>
+            </section>
+        </form>
+        
+        <output 
+            id="resultado" 
+            class="result" 
+            style="display: none;"
+        ></output>
+    </main>
+    
+    <script type="module" src="main.js"></script>
+</body>
+</html>

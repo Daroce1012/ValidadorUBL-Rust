@@ -1,0 +1,28 @@
+[package]
+name = "validador-ubl"
+version = "0.1.0"
+edition = "2021"
+authors = ["Tu Nombre <tu@email.com>"]
+description = "Validador de documentos UBL en formato XML"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Para parsing y validación de XML
+quick-xml = "0.31"
+# Para manejo de errores más elegante
+anyhow = "1.0"
+# Para WebAssembly
+wasm-bindgen = "0.2"
+# Para manejo de argumentos de línea de comandos (solo para binario)
+clap = { version = "4.4", features = ["derive"], optional = true }
+
+[[bin]]
+name = "validador-ubl"
+required-features = ["cli"]
+
+[features]
+default = []
+cli = ["clap"]

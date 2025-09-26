@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ERROR: XML malformado - etiqueta sin cerrar -->
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
+    <cbc:ID>F001-00000001</cbc:ID>
+    <cbc:IssueDate>2024-01-15</cbc:IssueDate>
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cac:PartyName>
+                <cbc:Name>Empresa Proveedora S.A.C.</cbc:Name>
+            </cac:PartyName>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+<!-- Falta cerrar la etiqueta Invoice -->
