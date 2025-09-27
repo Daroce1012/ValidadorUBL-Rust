@@ -1,19 +1,71 @@
+# Dependencias de Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Archivos compilados de TypeScript
+compiled/
+dist/
+build/
+*.js.map
+*.d.ts.map
+
 # Rust
 /target/
+rust/target/
 Cargo.lock
+*.pdb
+*.exe
+*.dll
+*.lib
+*.exp
 
-# IDE
-.vscode/
-.idea/
+# WASM
+*.wasm
+rust/wasm-output/
+
+# Archivos temporales y de sistema
+*.tmp
+*.temp
 *.swp
 *.swo
-
-# OS
+*~
 .DS_Store
 Thumbs.db
+Desktop.ini
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-*
+.atom/
+.brackets.json
 
 # Logs
 *.log
+logs/
 
+# Archivos de configuración local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-node_modules/
+# Archivos de cache
+.cache/
+.parcel-cache/
+
+# Archivos de backup
+*.bak
+*.backup
+*_backup.*
+
+# Archivos de prueba generados
+test-output/
+temp-files/
+
+# Archivos de documentación generados
+docs/build/
