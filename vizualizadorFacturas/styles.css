@@ -413,7 +413,9 @@ body {
     box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
 }
 
-.invoice-details-section > div {
+.invoice-details-section .invoice-number,
+.invoice-details-section .invoice-date,
+.invoice-details-section .invoice-currency {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -425,7 +427,9 @@ body {
     transition: all 0.3s ease;
 }
 
-.invoice-details-section > div:hover {
+.invoice-details-section .invoice-number:hover,
+.invoice-details-section .invoice-date:hover,
+.invoice-details-section .invoice-currency:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
