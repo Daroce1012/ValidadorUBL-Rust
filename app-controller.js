@@ -1,40 +1,115 @@
 /**
- * Controlador Principal de la Aplicación
- * Coordina todos los componentes del validador UBL
+ * Controlador Principal Unificado de la Aplicación
+ * Integra validación UBL y visualización de facturas
  */
-import { DOMManager } from './dom-manager.js';
+import { UnifiedDOMManager } from './dom-manager.js';
 import { FileHandler } from './file-handler.js';
 import { UBLValidator } from './ubl-validator.js';
 import { Logger } from './utils.js';
 
-export class AppController {
+export class UnifiedAppController {
     constructor() {
-        this.dom = new DOMManager();
+        this.dom = new UnifiedDOMManager();
         this.fileHandler = new FileHandler();
         this.validator = new UBLValidator();
         this.processing = false;
+        this.currentView = 'upload';
+        this.visualizer = null; // Se inicializará cuando se cargue TypeScript
+        this.validationResult = null;
     }
 
     // Inicializa la aplicación
     async initialize() {
         try {
+            Logger.info('🚀 Iniciando aplicación...');
+            
+            // Inicializar validador WebAssembly
+            Logger.info('📦 Inicializando WebAssembly...');
             await this.validator.initialize();
+            
+            // Cargar módulo TypeScript compilado
+            Logger.info('📝 Cargando módulos TypeScript...');
+            await this.loadTypeScriptModules();
+            
+            // Configurar eventos y funciones globales
+            Logger.info('⚙️ Configurando eventos...');
             this._setupEvents();
             this._setupGlobalFunctions();
-            Logger.info('✅ Aplicación inicializada correctamente');
+            
+            Logger.info('✅ Aplicación unificada inicializada correctamente');
         } catch (error) {
             Logger.error('❌ Error inicializando la aplicación:', error);
-            this.dom.showResult('Error cargando el validador. Recarga la página.', 'error');
+            this.dom.showResult('Error cargando la aplicación. Recarga la página.', 'error');
         }
     }
 
-    // Configura eventos y funciones globales
+    // Carga los módulos TypeScript compilados
+    async loadTypeScriptModules() {
+        try {
+            const { UBLInvoiceVisualizer } = await import('./compiled/modules.js');
+            this.visualizer = new UBLInvoiceVisualizer();
+            Logger.info('✅ Módulos TypeScript cargados');
+        } catch (error) {
+            Logger.error('❌ Error cargando módulos TypeScript:', error);
+            Logger.error('Detalles del error:', error);
+            // No lanzar error, solo mostrar advertencia
+            Logger.warn('⚠️ Continuando sin módulos TypeScript - solo validación disponible');
+            this.visualizer = null;
+        }
+    }
+
+    // Configura eventos de la interfaz
     _setupEvents() {
+        Logger.info('🔗 Configurando event listeners...');
         this.dom.setupEventListeners((file) => this._handleFileSelect(file));
+        
+        // Eventos específicos de la aplicación unificada
+        Logger.info('🎮 Configurando eventos específicos...');
+        this._setupUnifiedEvents();
+        Logger.info('✅ Eventos configurados correctamente');
+    }
+
+    _setupUnifiedEvents() {
+        // Botón de validación
+        const validateBtn = document.getElementById('validateBtn');
+        if (validateBtn) {
+            validateBtn.addEventListener('click', () => this.validateDocument());
+        }
+
+        // Botón de visualización
+        const visualizeBtn = document.getElementById('visualizeBtn');
+        if (visualizeBtn) {
+            visualizeBtn.addEventListener('click', () => this.visualizeDocument());
+        }
+
+        // Botón de cambio de archivo
+        const changeFileBtn = document.getElementById('changeFileBtn');
+        if (changeFileBtn) {
+            changeFileBtn.addEventListener('click', () => this.changeFile());
+        }
+
+        // Botón de cerrar visualización
+        const closeBtn = document.getElementById('closeBtn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.goToUploadPage());
+        }
+
+        // Botón de descarga PDF
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        if (downloadPdfBtn) {
+            downloadPdfBtn.addEventListener('click', () => this.downloadPDF());
+        }
+
+        // Botón de reintentar
+        const retryBtn = document.getElementById('retryBtn');
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => this.retryUpload());
+        }
     }
 
     _setupGlobalFunctions() {
-        window.validar = () => this.validate();
+        window.validar = () => this.validateDocument();
+        window.visualizar = () => this.visualizeDocument();
         window.clearFile = () => this.clearFile();
     }
 
@@ -51,12 +126,16 @@ export class AppController {
     _onFileLoaded(file, fileSize) {
         this.dom.showFileInfo(file.name, fileSize);
         this.dom.hideResult();
-        this.dom.showResult('Archivo cargado. Haz clic en "Validar Documento".', 'success');
-        this._toggleClearButton(true);
+        this.dom.showResult('Archivo cargado. Selecciona una acción.', 'success');
+        this.dom.showFilePreview();
+        
+        // Resetear estado de validación y actualizar botones
+        this.validationResult = null;
+        this.updateVisualizationButtonState();
     }
 
     // Valida el documento UBL
-    async validate() {
+    async validateDocument() {
         if (this.processing) return;
         
         if (!this.fileHandler.hasFile()) {
@@ -65,16 +144,124 @@ export class AppController {
         }
         
         this.processing = true;
-        this.dom.setButtonState(true);
+        this.dom.setButtonState(true, 'Validando documento...');
         this.dom.showResult('Validando documento...', 'loading');
         
         const content = this.fileHandler.getLoadedContent();
-        await this.validator.validate(content, (message, type) => {
-            this.dom.showResult(message, type);
-        });
+        
+        try {
+            await this.validator.validate(content, (message, type) => {
+                this.dom.showResult(message, type);
+                
+                // Guardar resultado de validación
+                if (type === 'success' || type === 'error') {
+                    this.validationResult = {
+                        isValid: type === 'success',
+                        message: message,
+                        errors: type === 'error' ? [message] : undefined
+                    };
+                    
+                    // Actualizar estado del botón de visualización
+                    this.updateVisualizationButtonState();
+                }
+            });
+        } catch (error) {
+            Logger.error('Error durante validación:', error);
+            this.dom.showResult(`Error durante la validación: ${error.message}`, 'error');
+        }
         
         this.processing = false;
-        this.dom.setButtonState(false);
+        this.dom.setButtonState(false, 'Validar Documento');
+    }
+
+    // Visualiza el documento UBL
+    async visualizeDocument() {
+        if (this.processing) return;
+        
+        if (!this.fileHandler.hasFile()) {
+            this.dom.showResult('Carga un archivo XML UBL para visualizar.', 'warning');
+            return;
+        }
+        
+        if (!this.visualizer) {
+            this.dom.showResult('Error: Módulo de visualización no disponible.', 'error');
+            return;
+        }
+        
+        // Verificar que la validación fue exitosa
+        if (!this.validationResult || !this.validationResult.isValid) {
+            this.dom.showResult('⚠️ Primero debes validar el documento exitosamente antes de visualizarlo.', 'warning');
+            return;
+        }
+        
+        this.processing = true;
+        this.dom.setButtonState(true, 'Procesando visualización...');
+        
+        const content = this.fileHandler.getLoadedContent();
+        
+        try {
+            // Procesar archivo con visualizador TypeScript
+            await this.visualizer.processXMLFile(content, this.validationResult);
+            
+            // Cambiar a vista de visualización
+            this.goToVisualizationPage();
+            
+        } catch (error) {
+            Logger.error('Error durante visualización:', error);
+            this.dom.showResult(`Error al visualizar el documento: ${error.message}`, 'error');
+        }
+        
+        this.processing = false;
+        this.dom.setButtonState(false, 'Visualizar Factura');
+    }
+
+    // Descarga PDF de la factura visualizada
+    async downloadPDF() {
+        if (!this.visualizer || !this.visualizer.hasInvoice()) {
+            this.dom.showResult('No hay factura cargada para generar PDF.', 'warning');
+            return;
+        }
+        
+        try {
+            await this.visualizer.generatePDFFromHTML();
+            this.visualizer.showSuccessMessage('PDF generado exitosamente');
+        } catch (error) {
+            Logger.error('Error generando PDF:', error);
+            this.visualizer.showErrorMessage(`Error generando PDF: ${error.message}`);
+        }
+    }
+
+    // Cambia a la página de visualización
+    goToVisualizationPage() {
+        this.currentView = 'visualization';
+        this.dom.showPage('visualization');
+        this.dom.hidePage('upload');
+    }
+
+    // Cambia a la página de carga
+    goToUploadPage() {
+        this.currentView = 'upload';
+        this.dom.showPage('upload');
+        this.dom.hidePage('visualization');
+        
+        // Limpiar visualizador
+        if (this.visualizer) {
+            this.visualizer.clearInvoice();
+        }
+    }
+
+    // Cambia el archivo
+    changeFile() {
+        this.clearFile();
+        this.dom.hideFilePreview();
+        this.dom.showResult('Selecciona un nuevo archivo.', 'warning');
+    }
+
+    // Reintenta la carga
+    retryUpload() {
+        this.clearFile();
+        this.dom.hideFilePreview();
+        this.dom.hideError();
     }
 
     // Limpia el archivo cargado
@@ -83,13 +270,44 @@ export class AppController {
         this.fileHandler.clearFile();
         this.dom.hideFileInfo();
         this.dom.hideResult();
-        this.dom.showResult('Archivo eliminado. Selecciona otro archivo.', 'warning');
-        this._toggleClearButton(false);
+        this.dom.hideFilePreview();
+        this.dom.hideError();
+        this.validationResult = null;
+        this.currentView = 'upload';
+        this.dom.showPage('upload');
+        this.dom.hidePage('visualization');
     }
 
-    // Controla visibilidad del botón limpiar
-    _toggleClearButton(show) {
-        const clearButton = document.getElementById('clearButton');
-        if (clearButton) clearButton.style.display = show ? 'block' : 'none';
+    // Actualiza el estado del botón de visualización según el resultado de validación
+    updateVisualizationButtonState() {
+        const visualizeBtn = document.getElementById('visualizeBtn');
+        if (!visualizeBtn) return;
+        
+        if (this.validationResult && this.validationResult.isValid) {
+            // Validación exitosa - habilitar botón
+            visualizeBtn.disabled = false;
+            visualizeBtn.classList.remove('disabled');
+            visualizeBtn.title = 'Visualizar factura validada';
+        } else {
+            // Sin validación o validación fallida - deshabilitar botón
+            visualizeBtn.disabled = true;
+            visualizeBtn.classList.add('disabled');
+            if (this.validationResult && !this.validationResult.isValid) {
+                visualizeBtn.title = 'Primero debes validar el documento exitosamente';
+            } else {
+                visualizeBtn.title = 'Primero debes validar el documento';
+            }
+        }
+    }
+
+    // Obtiene el estado actual de la aplicación
+    getAppState() {
+        return {
+            currentFile: this.fileHandler.hasFile(),
+            currentView: this.currentView,
+            isProcessing: this.processing,
+            validationResult: this.validationResult,
+            hasInvoice: this.visualizer ? this.visualizer.hasInvoice() : false
+        };
     }
 }

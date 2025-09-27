@@ -1,0 +1,34 @@
+{
+  "name": "validador-visualizador-ubl",
+  "version": "1.0.0",
+  "description": "Aplicación unificada para validar y visualizar documentos UBL",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && echo 'TypeScript compilado exitosamente'",
+    "build:watch": "tsc --watch",
+    "dev": "npm run build && echo 'Compilación completada. Abre index.html en tu navegador.'",
+    "clean": "rm -rf compiled/* && echo 'Archivos compilados eliminados'",
+    "serve": "python -m http.server 8000 || python3 -m http.server 8000",
+    "test": "echo 'Ejecutando tests...' && exit 0"
+  },
+  "keywords": [
+    "ubl",
+    "xml",
+    "validator",
+    "visualizer",
+    "typescript",
+    "webassembly",
+    "rust"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  },
+  "dependencies": {
+    "jspdf": "^2.5.1",
+    "html2canvas": "^1.4.1"
+  }
+}

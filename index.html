@@ -3,61 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Validador de documentos UBL (Universal Business Language) en formato XML">
-    <title>Validador UBL - Documentos XML</title>
+    <meta name="description" content="Validador y Visualizador de documentos UBL (Universal Business Language) en formato XML">
+    <title>🔍📄 Validador y Visualizador UBL</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-    <main class="container">
-        <header>
-            <h1>🔍 Validador UBL</h1>
-            <p>Valida documentos UBL de forma rápida y precisa</p>
+    <main class="app">
+        <!-- Header Unificado -->
+        <header class="header">
+            <h1>🔍📄 Validador y Visualizador UBL</h1>
+            <p>Valida y visualiza documentos UBL de forma rápida y precisa</p>
         </header>
-        
-        <form>
-            <label for="fileInput">Cargar archivo XML UBL</label>
-            <fieldset class="file-upload-area" id="fileUploadArea">
-                <input 
-                    type="file" 
-                    id="fileInput" 
-                    accept=".xml,text/xml"
-                    class="file-input"
-                >
-                <section class="file-upload-content">
-                    <span class="file-icon">📄</span>
-                    <p>Haz clic para seleccionar tu archivo XML</p>
+
+        <div class="main-content">
+            <!-- PÁGINA 1: Carga de archivos y acciones -->
+            <section class="page" id="uploadPage">
+                <section class="upload-section">
+                    <!-- Área de carga unificada -->
+                    <section class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Área de carga de archivos">
+                        <span class="upload-icon" aria-hidden="true">📁</span>
+                        <h2>Arrastra y suelta tu archivo UBL aquí</h2>
+                        <p>o</p>
+                        <button class="upload-btn" id="uploadBtn">Seleccionar archivo</button>
+                        <input type="file" id="fileInput" accept=".xml,text/xml" style="display: none;">
+                        <p class="file-info">Formatos soportados: XML (.xml)</p>
+                    </section>
+                    
+                    <!-- Información del archivo cargado -->
+                    <section class="file-preview" id="filePreview" style="display: none;">
+                        <article class="preview-card">
+                            <h3>📄 Archivo seleccionado</h3>
+                            <p id="fileName"></p>
+                            <nav class="preview-actions">
+                                <button class="btn-primary" id="validateBtn">🔍 Validar Documento</button>
+                                <button class="btn-primary disabled" id="visualizeBtn" disabled title="Primero debes validar el documento">📄 Visualizar Factura</button>
+                                <button class="btn-secondary" id="changeFileBtn">🔄 Cambiar Archivo</button>
+                            </nav>
+                        </article>
+                    </section>
                 </section>
-                <section class="file-info" id="fileInfo" style="display: none;">
-                    <span class="file-name" id="fileName"></span>
+
+                <!-- Resultado de validación -->
+                <output id="validationResult" class="result" style="display: none;"></output>
+
+                <!-- Sección de error -->
+                <section class="error-section" id="errorSection" style="display: none;">
+                    <article class="error-card">
+                        <h3>❌ Error al procesar el archivo</h3>
+                        <p id="errorMessage"></p>
+                        <button class="retry-btn" id="retryBtn">Intentar de nuevo</button>
+                    </article>
                 </section>
-            </fieldset>
-            <small class="help-text">
-                El documento debe contener: Invoice, ID, IssueDate y AccountingSupplierParty
-            </small>
-            
-            <section class="button-group">
-                <button type="button" class="button" onclick="validar()">
-                    Validar Documento
-                </button>
-                <button 
-                    type="button" 
-                    class="button button-secondary" 
-                    onclick="clearFile()"
-                    id="clearButton"
-                    style="display: none;"
-                >
-                    Limpiar Archivo
-                </button>
             </section>
-        </form>
-        
-        <output 
-            id="resultado" 
-            class="result" 
-            style="display: none;"
-        ></output>
+
+            <!-- PÁGINA 2: Visualización de factura -->
+            <section class="page" id="visualizationPage" style="display: none;">
+                <section class="invoice-section">
+                    <header class="invoice-header">
+                        <h2>📄 FACTURA</h2>
+                        <nav class="header-actions">
+                            <button class="download-pdf-btn" id="downloadPdfBtn">
+                                <span class="btn-icon">📥</span>
+                                <span class="btn-text">Descargar PDF</span>
+                            </button>
+                            <button class="close-btn" id="closeBtn">
+                                <span class="btn-icon">←</span>
+                                <span class="btn-text">Volver</span>
+                            </button>
+                        </nav>
+                    </header>
+                    
+                    <!-- Estado de validación en la visualización -->
+                    <section class="validation-status" id="validationStatus" style="display: none;"></section>
+                    
+                    <main class="invoice-content">
+                        <!-- Información del emisor y receptor -->
+                        <section class="invoice-parties-section">
+                            <article class="party-section">
+                                <h3>EMISOR</h3>
+                                <section class="party-info" id="supplierInfo">
+                                    <!-- Se llenará dinámicamente -->
+                                </section>
+                            </article>
+                            <article class="party-section">
+                                <h3>RECEPTOR</h3>
+                                <section class="party-info" id="customerInfo">
+                                    <!-- Se llenará dinámicamente -->
+                                </section>
+                            </article>
+                        </section>
+
+                        <!-- Información de la factura -->
+                        <section class="invoice-details-section">
+                            <section class="invoice-number">
+                                <span class="label">Nº Factura:</span>
+                                <span class="value" id="invoiceNumber">-</span>
+                            </section>
+                            <section class="invoice-date">
+                                <span class="label">Fecha:</span>
+                                <span class="value" id="invoiceDate">-</span>
+                            </section>
+                            <section class="invoice-currency">
+                                <span class="label">Moneda:</span>
+                                <span class="value" id="invoiceCurrency">-</span>
+                            </section>
+                        </section>
+
+                        <!-- Tabla de productos/servicios -->
+                        <section class="invoice-items-section">
+                            <table class="invoice-items-table" id="invoiceTable">
+                                <caption>Detalle de productos y servicios</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="description">Descripción</th>
+                                        <th scope="col" class="quantity">Cantidad</th>
+                                        <th scope="col" class="price">Precio Unit.</th>
+                                        <th scope="col" class="total">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceTableBody">
+                                    <!-- Se llenará dinámicamente -->
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- Totales -->
+                        <section class="invoice-totals-section">
+                            <section class="totals-container" id="totalsInfo">
+                                <!-- Se llenará dinámicamente -->
+                            </section>
+                        </section>
+                    </main>
+                </section>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>Validador y Visualizador UBL - Desarrollado con TypeScript y WebAssembly</p>
+        </footer>
     </main>
     
+    <!-- Scripts -->
     <script type="module" src="main.js"></script>
 </body>
 </html>
