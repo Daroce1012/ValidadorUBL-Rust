@@ -17,44 +17,44 @@
 
         <main class="main-content">
             <!-- PÁGINA 1: Carga de archivos -->
-            <div class="page" id="uploadPage">
+            <section class="page" id="uploadPage">
                 <section class="upload-section">
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-icon">📁</div>
-                        <h3>Arrastra y suelta tu archivo UBL aquí</h3>
+                    <section class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Área de carga de archivos">
+                        <span class="upload-icon" aria-hidden="true">📁</span>
+                        <h2>Arrastra y suelta tu archivo UBL aquí</h2>
                         <p>o</p>
                         <button class="upload-btn" id="uploadBtn">Seleccionar archivo</button>
                         <input type="file" id="fileInput" accept=".xml" style="display: none;">
                         <p class="file-info">Formatos soportados: XML (.xml)</p>
-                    </div>
+                    </section>
                     
-                    <div class="file-preview" id="filePreview" style="display: none;">
-                        <div class="preview-card">
+                    <section class="file-preview" id="filePreview" style="display: none;">
+                        <article class="preview-card">
                             <h3>📄 Archivo seleccionado</h3>
                             <p id="fileName"></p>
-                            <div class="preview-actions">
+                            <nav class="preview-actions">
                                 <button class="btn-primary" id="previewBtn">👁️ Previsualizar Factura</button>
                                 <button class="btn-secondary" id="changeFileBtn">🔄 Cambiar Archivo</button>
-                            </div>
-                        </div>
-                    </div>
+                            </nav>
+                        </article>
+                    </section>
                 </section>
 
                 <section class="error-section" id="errorSection" style="display: none;">
-                    <div class="error-card">
+                    <article class="error-card">
                         <h3>❌ Error al procesar el archivo</h3>
                         <p id="errorMessage"></p>
                         <button class="retry-btn" id="retryBtn">Intentar de nuevo</button>
-                    </div>
+                    </article>
                 </section>
-            </div>
+            </section>
 
             <!-- PÁGINA 2: Visualización de factura -->
-            <div class="page" id="invoicePage" style="display: none;">
+            <section class="page" id="invoicePage" style="display: none;">
                 <section class="invoice-section">
-                    <div class="invoice-header">
+                    <header class="invoice-header">
                         <h2>📄 FACTURA</h2>
-                        <div class="header-actions">
+                        <nav class="header-actions">
                             <button class="download-pdf-btn" id="downloadPdfBtn">
                                 <span class="btn-icon">📥</span>
                                 <span class="btn-text">Descargar PDF</span>
@@ -63,68 +63,69 @@
                                 <span class="btn-icon">←</span>
                                 <span class="btn-text">Volver</span>
                             </button>
-                        </div>
-                    </div>
+                        </nav>
+                    </header>
                     
-                    <div class="invoice-content">
+                    <main class="invoice-content">
                         <!-- Información del emisor y receptor -->
-                        <div class="invoice-parties-section">
-                            <div class="party-section">
+                        <section class="invoice-parties-section">
+                            <article class="party-section">
                                 <h3>EMISOR</h3>
-                                <div class="party-info" id="supplierInfo">
+                                <section class="party-info" id="supplierInfo">
                                     <!-- Se llenará dinámicamente -->
-                                </div>
-                            </div>
-                            <div class="party-section">
+                                </section>
+                            </article>
+                            <article class="party-section">
                                 <h3>RECEPTOR</h3>
-                                <div class="party-info" id="customerInfo">
+                                <section class="party-info" id="customerInfo">
                                     <!-- Se llenará dinámicamente -->
-                                </div>
-                            </div>
-                        </div>
+                                </section>
+                            </article>
+                        </section>
 
                         <!-- Información de la factura -->
-                        <div class="invoice-details-section">
-                            <div class="invoice-number">
+                        <section class="invoice-details-section">
+                            <section class="invoice-number">
                                 <span class="label">Nº Factura:</span>
                                 <span class="value" id="invoiceNumber">-</span>
-                            </div>
-                            <div class="invoice-date">
+                            </section>
+                            <section class="invoice-date">
                                 <span class="label">Fecha:</span>
                                 <span class="value" id="invoiceDate">-</span>
-                            </div>
-                            <div class="invoice-currency">
+                            </section>
+                            <section class="invoice-currency">
                                 <span class="label">Moneda:</span>
                                 <span class="value" id="invoiceCurrency">-</span>
-                            </div>
-                        </div>
+                            </section>
+                        </section>
 
                         <!-- Tabla de productos/servicios -->
-                        <div class="invoice-items-section">
+                        <section class="invoice-items-section">
                             <table class="invoice-items-table" id="invoiceTable">
+                                <caption>Detalle de productos y servicios</caption>
                                 <thead>
                                     <tr>
-                                        <th class="description">Descripción</th>
-                                        <th class="quantity">Cantidad</th>
-                                        <th class="price">Precio Unit.</th>
-                                        <th class="total">Total</th>
+                                        <th scope="col" class="description">Descripción</th>
+                                        <th scope="col" class="quantity">Cantidad</th>
+                                        <th scope="col" class="price">Precio Unit.</th>
+                                        <th scope="col" class="total">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="invoiceTableBody">
                                     <!-- Se llenará dinámicamente -->
                                 </tbody>
                             </table>
-                        </div>
+                        </section>
 
                         <!-- Totales -->
-                        <div class="invoice-totals-section">
-                            <div class="totals-container" id="totalsInfo">
+                        <section class="invoice-totals-section">
+                            <section class="totals-container" id="totalsInfo">
                                 <!-- Se llenará dinámicamente -->
-                            </div>
-                        </div>
-                    </div>
+                            </section>
+                        </section>
+                    </main>
                 </section>
-            </div>
+            </section>
         </main>
 
         <footer class="footer">
