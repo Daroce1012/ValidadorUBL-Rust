@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Facturas UBL</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📄 Visualizador de Facturas UBL</h1>
+            <p>Visualiza y analiza facturas en formato UBL (Universal Business Language)</p>
+        </header>
+
+        <main class="main-content">
+            <!-- PÁGINA 1: Carga de archivos -->
+            <div class="page" id="uploadPage">
+                <section class="upload-section">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📁</div>
+                        <h3>Arrastra y suelta tu archivo UBL aquí</h3>
+                        <p>o</p>
+                        <button class="upload-btn" id="uploadBtn">Seleccionar archivo</button>
+                        <input type="file" id="fileInput" accept=".xml" style="display: none;">
+                        <p class="file-info">Formatos soportados: XML (.xml)</p>
+                    </div>
+                    
+                    <div class="file-preview" id="filePreview" style="display: none;">
+                        <div class="preview-card">
+                            <h3>📄 Archivo seleccionado</h3>
+                            <p id="fileName"></p>
+                            <div class="preview-actions">
+                                <button class="btn-primary" id="previewBtn">👁️ Previsualizar Factura</button>
+                                <button class="btn-secondary" id="changeFileBtn">🔄 Cambiar Archivo</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="error-section" id="errorSection" style="display: none;">
+                    <div class="error-card">
+                        <h3>❌ Error al procesar el archivo</h3>
+                        <p id="errorMessage"></p>
+                        <button class="retry-btn" id="retryBtn">Intentar de nuevo</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- PÁGINA 2: Visualización de factura -->
+            <div class="page" id="invoicePage" style="display: none;">
+                <section class="invoice-section">
+                    <div class="invoice-header">
+                        <h2>📄 FACTURA</h2>
+                        <div class="header-actions">
+                            <button class="download-pdf-btn" id="downloadPdfBtn">
+                                <span class="btn-icon">📥</span>
+                                <span class="btn-text">Descargar PDF</span>
+                            </button>
+                            <button class="close-btn" id="closeBtn">
+                                <span class="btn-icon">←</span>
+                                <span class="btn-text">Volver</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="invoice-content">
+                        <!-- Información del emisor y receptor -->
+                        <div class="invoice-parties-section">
+                            <div class="party-section">
+                                <h3>EMISOR</h3>
+                                <div class="party-info" id="supplierInfo">
+                                    <!-- Se llenará dinámicamente -->
+                                </div>
+                            </div>
+                            <div class="party-section">
+                                <h3>RECEPTOR</h3>
+                                <div class="party-info" id="customerInfo">
+                                    <!-- Se llenará dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información de la factura -->
+                        <div class="invoice-details-section">
+                            <div class="invoice-number">
+                                <span class="label">Nº Factura:</span>
+                                <span class="value" id="invoiceNumber">-</span>
+                            </div>
+                            <div class="invoice-date">
+                                <span class="label">Fecha:</span>
+                                <span class="value" id="invoiceDate">-</span>
+                            </div>
+                            <div class="invoice-currency">
+                                <span class="label">Moneda:</span>
+                                <span class="value" id="invoiceCurrency">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de productos/servicios -->
+                        <div class="invoice-items-section">
+                            <table class="invoice-items-table" id="invoiceTable">
+                                <thead>
+                                    <tr>
+                                        <th class="description">Descripción</th>
+                                        <th class="quantity">Cantidad</th>
+                                        <th class="price">Precio Unit.</th>
+                                        <th class="total">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceTableBody">
+                                    <!-- Se llenará dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Totales -->
+                        <div class="invoice-totals-section">
+                            <div class="totals-container" id="totalsInfo">
+                                <!-- Se llenará dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Visualizador de Facturas UBL - Desarrollado con TypeScript</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
