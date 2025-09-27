@@ -44,7 +44,7 @@ body {
     padding: 1rem;
 }
 
-.container {
+.app {
     max-width: 1200px;
     margin: 0 auto;
     background: var(--white);
@@ -777,7 +777,7 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .container {
+    .app {
         margin: 0.5rem;
     }
     
@@ -1010,7 +1010,7 @@ body {
         background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
     }
     
-    .container {
+    .app {
         background: rgba(17, 24, 39, 0.95);
         border: 1px solid rgba(75, 85, 99, 0.3);
     }
