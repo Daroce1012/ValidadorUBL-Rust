@@ -25,21 +25,10 @@ export function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Sistema de logging
-export class Logger {
-    static error(message, ...args) {
-        console.error(message, ...args);
-    }
-    
-    static warn(message, ...args) {
-        console.warn(message, ...args);
-    }
-    
-    static info(message, ...args) {
-        console.info(message, ...args);
-    }
-    
-    static debug(message, ...args) {
-        console.log(message, ...args);
-    }
-}
+// Sistema de logging simplificado
+export const Logger = {
+    error: (message, ...args) => console.error(message, ...args),
+    warn: (message, ...args) => console.warn(message, ...args),
+    info: (message, ...args) => console.info(message, ...args),
+    debug: (message, ...args) => console.log(message, ...args)
+};

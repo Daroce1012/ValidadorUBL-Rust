@@ -56,8 +56,7 @@ export class UBLInvoiceVisualizer {
         }
 
         const pdfOptions: PDFGenerationOptions = {
-            includeValidationReport: options?.showValidationStatus && !!this.validationResult,
-            validationResult: this.validationResult || undefined,
+            includeValidationReport: false,
             ...options?.pdfOptions
         };
 
@@ -74,8 +73,7 @@ export class UBLInvoiceVisualizer {
         }
 
         const options = {
-            includeValidation: !!this.validationResult,
-            ...(this.validationResult && { validationResult: this.validationResult })
+            includeValidation: false
         };
         
         await this.pdfGenerator.generatePDFFromHTML(invoiceContent, options);

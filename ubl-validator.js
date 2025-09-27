@@ -25,15 +25,13 @@ export class UBLValidator {
 
     // Valida un documento UBL
     async validate(content, onResult) {
-        // Validaciones previas
         if (!this.ready) return onResult('Validador cargando...', 'warning');
         if (!content) return onResult('Carga un archivo XML UBL para validar.', 'warning');
         
         try {
-            await delay(300); // Efecto visual
+            await delay(300);
             const resultado = validar_ubl(content);
             
-            // Procesar resultado
             if (resultado === 'Válido') {
                 onResult('✅ Documento válido: Cumple con todos los requisitos UBL', 'success');
             } else {

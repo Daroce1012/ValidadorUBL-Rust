@@ -1,7 +1,6 @@
 /**
  * Manejador de Archivos
  * Gestiona la carga y almacenamiento de archivos XML
- * Las validaciones de contenido se hacen en WebAssembly
  */
 import { formatFileSize, isValidFileSize } from './utils.js';
 
@@ -12,11 +11,9 @@ export class FileHandler {
 
     // Procesa un archivo seleccionado
     handleFile(file, onSuccess, onError) {
-        // Solo validaciones básicas - el contenido se valida en WebAssembly
         if (!file) return onError('No se pudo cargar el archivo.');
         if (!isValidFileSize(file, 10)) return onError('El archivo es demasiado grande. Máximo 10MB.');
         
-        // Lectura del archivo
         const reader = new FileReader();
         reader.onload = (e) => {
             this.content = e.target.result;

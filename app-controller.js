@@ -52,7 +52,7 @@ export class UnifiedAppController {
         } catch (error) {
             Logger.error('❌ Error cargando módulos TypeScript:', error);
             Logger.error('Detalles del error:', error);
-            // No lanzar error, solo mostrar advertencia
+            Logger.warn('⚠️ Asegúrate de ejecutar la aplicación desde un servidor HTTP (no file://)');
             Logger.warn('⚠️ Continuando sin módulos TypeScript - solo validación disponible');
             this.visualizer = null;
         }
@@ -62,48 +62,27 @@ export class UnifiedAppController {
     _setupEvents() {
         Logger.info('🔗 Configurando event listeners...');
         this.dom.setupEventListeners((file) => this._handleFileSelect(file));
-        
-        // Eventos específicos de la aplicación unificada
-        Logger.info('🎮 Configurando eventos específicos...');
-        this._setupUnifiedEvents();
+        this._setupAppEvents();
         Logger.info('✅ Eventos configurados correctamente');
     }
 
-    _setupUnifiedEvents() {
-        // Botón de validación
-        const validateBtn = document.getElementById('validateBtn');
-        if (validateBtn) {
-            validateBtn.addEventListener('click', () => this.validateDocument());
-        }
+    _setupAppEvents() {
+        // Eventos de la aplicación - solo configuración, sin lógica
+        this._bindEvent('validateBtn', 'click', () => this.validateDocument());
+        this._bindEvent('visualizeBtn', 'click', () => this.visualizeDocument());
+        this._bindEvent('changeFileBtn', 'click', () => this.changeFile());
+        this._bindEvent('closeBtn', 'click', () => this.goToUploadPage());
+        this._bindEvent('downloadPdfBtn', 'click', () => this.downloadPDF());
+        this._bindEvent('retryBtn', 'click', () => this.retryUpload());
+        
+    }
 
-        // Botón de visualización
-        const visualizeBtn = document.getElementById('visualizeBtn');
-        if (visualizeBtn) {
-            visualizeBtn.addEventListener('click', () => this.visualizeDocument());
-        }
-
-        // Botón de cambio de archivo
-        const changeFileBtn = document.getElementById('changeFileBtn');
-        if (changeFileBtn) {
-            changeFileBtn.addEventListener('click', () => this.changeFile());
-        }
-
-        // Botón de cerrar visualización
-        const closeBtn = document.getElementById('closeBtn');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.goToUploadPage());
-        }
-
-        // Botón de descarga PDF
-        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-        if (downloadPdfBtn) {
-            downloadPdfBtn.addEventListener('click', () => this.downloadPDF());
-        }
-
-        // Botón de reintentar
-        const retryBtn = document.getElementById('retryBtn');
-        if (retryBtn) {
-            retryBtn.addEventListener('click', () => this.retryUpload());
+    _bindEvent(elementId, event, handler) {
+        const element = document.getElementById(elementId);
+        if (element) {
+        element.addEventListener(event, handler);
+        } else {
+            console.error(`❌ Elemento ${elementId} no encontrado para registrar evento ${event}`);
         }
     }
 
@@ -252,9 +231,24 @@ export class UnifiedAppController {
 
     // Cambia el archivo
     changeFile() {
-        this.clearFile();
-        this.dom.hideFilePreview();
-        this.dom.showResult('Selecciona un nuevo archivo.', 'warning');
+        // Ocultar previsualización del archivo
+        const filePreview = document.getElementById('filePreview');
+        if (filePreview) {
+            filePreview.style.display = 'none';
+        }
+        
+        // Mostrar mensaje de selección
+        const validationResult = document.getElementById('validationResult');
+        if (validationResult) {
+            validationResult.textContent = 'Selecciona un nuevo archivo.';
+            validationResult.className = 'result warning';
+            validationResult.style.display = 'block';
+        }
+        
+        // Limpiar estado
+        this.fileHandler.clearFile();
+        this.validationResult = null;
+        this.updateVisualizationButtonState();
     }
 
     // Reintenta la carga
@@ -276,6 +270,7 @@ export class UnifiedAppController {
         this.currentView = 'upload';
         this.dom.showPage('upload');
         this.dom.hidePage('visualization');
+        this.updateVisualizationButtonState();
     }
 
     // Actualiza el estado del botón de visualización según el resultado de validación

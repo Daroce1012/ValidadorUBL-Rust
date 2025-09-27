@@ -38,10 +38,7 @@ export class PDFGenerator {
             // Generar contenido de la factura
             await this.generateInvoiceContent(pdf, invoice, options);
 
-            // Agregar reporte de validación si se especifica
-            if (options?.includeValidationReport && options.validationResult) {
-                this.addValidationReport(pdf, options.validationResult);
-            }
+            // Reporte de validación deshabilitado
 
             // Guardar el PDF
             const fileName = `Factura_${invoice.id}.pdf`;
@@ -145,11 +142,7 @@ export class PDFGenerator {
             
             pdf.addImage(imgData, 'PNG', margin, yPosition, imgWidth, imgHeight);
             
-            // Agregar reporte de validación si está disponible
-            if (options?.includeValidation && options.validationResult) {
-                pdf.addPage();
-                this.addValidationReport(pdf, options.validationResult);
-            }
+            // Reporte de validación deshabilitado
             
             const invoiceNumber = document.getElementById('invoiceNumber')?.textContent || 'factura';
             const fileName = `Factura_${invoiceNumber}.pdf`;

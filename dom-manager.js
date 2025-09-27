@@ -19,14 +19,12 @@ export class UnifiedDOMManager {
         
         if (missingElements.length > 0) {
             console.warn('⚠️ Elementos del DOM faltantes:', missingElements);
-        } else {
-            console.log('✅ Todos los elementos del DOM encontrados correctamente');
         }
     }
 
     // Obtiene referencias a los elementos del DOM
     _getElements() {
-        return {
+        const elements = {
             fileInput: document.getElementById('fileInput'),
             fileUploadArea: document.getElementById('uploadArea'),
             fileInfo: document.getElementById('fileInfo'),
@@ -48,6 +46,9 @@ export class UnifiedDOMManager {
             downloadPdfBtn: document.getElementById('downloadPdfBtn'),
             retryBtn: document.getElementById('retryBtn')
         };
+        
+        
+        return elements;
     }
 
     // Configura los eventos de la interfaz
@@ -72,7 +73,7 @@ export class UnifiedDOMManager {
             if (e.target === this.elements.fileInput) {
                 return;
             }
-            console.log('🖱️ Click en área de carga, abriendo selector de archivos');
+            // Abriendo selector de archivos
             this.elements.fileInput.click();
         });
 
@@ -106,7 +107,7 @@ export class UnifiedDOMManager {
         // Click en botón de carga
         if (this.elements.uploadBtn) {
             this.elements.uploadBtn.addEventListener('click', () => {
-                console.log('🖱️ Click en botón de carga, abriendo selector de archivos');
+                // Abriendo selector de archivos
                 this.elements.fileInput.click();
             });
         } else {
@@ -114,18 +115,43 @@ export class UnifiedDOMManager {
         }
     }
 
+    // Función genérica para mostrar/ocultar elementos
+    toggleElement(elementId, show, content = null, className = null) {
+        const element = this.elements[elementId];
+        if (!element) {
+            console.warn(`⚠️ Elemento ${elementId} no encontrado`);
+            return;
+        }
+
+        if (show) {
+            element.style.display = 'block';
+            if (content) element.textContent = content;
+            if (className) element.className = className;
+            if (elementId === 'validationResult') {
+                element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        } else {
+            element.style.display = 'none';
+        }
+    }
+
     // Muestra resultado de validación
     showResult(message, type) {
-        const { validationResult } = this.elements;
-        validationResult.textContent = message;
-        validationResult.className = `result ${type}`;
-        validationResult.style.display = 'block';
-        validationResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (this.elements.validationResult) {
+            this.elements.validationResult.textContent = message;
+            this.elements.validationResult.className = `result ${type}`;
+            this.elements.validationResult.style.display = 'block';
+            this.elements.validationResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 
     // Oculta resultado
     hideResult() {
-        this.elements.validationResult.style.display = 'none';
+        if (this.elements.validationResult) {
+            this.elements.validationResult.style.display = 'none';
+        } else {
+            console.error('❌ validationResult no encontrado');
+        }
     }
 
     // Controla estado de los botones
@@ -155,19 +181,20 @@ export class UnifiedDOMManager {
         this.elements.fileName.textContent = `${fileName} (${fileSize})`;
     }
 
-    // Oculta información del archivo
-    hideFileInfo() {
-        // No hay elemento específico para ocultar en la interfaz unificada
-    }
-
     // Muestra la previsualización del archivo
     showFilePreview() {
-        this.elements.filePreview.style.display = 'block';
+        if (this.elements.filePreview) {
+            this.elements.filePreview.style.display = 'block';
+        } else {
+            console.error('❌ filePreview no encontrado');
+        }
     }
 
     // Oculta la previsualización del archivo
     hideFilePreview() {
-        this.elements.filePreview.style.display = 'none';
+        if (this.elements.filePreview) {
+            this.elements.filePreview.style.display = 'none';
+        }
     }
 
     // Limpia el input de archivo
@@ -195,18 +222,31 @@ export class UnifiedDOMManager {
 
     // Muestra sección de error
     showError(message) {
-        this.elements.errorMessage.textContent = message;
-        this.elements.errorSection.style.display = 'block';
+        if (this.elements.errorMessage) {
+            this.elements.errorMessage.textContent = message;
+        }
+        if (this.elements.errorSection) {
+            this.elements.errorSection.style.display = 'block';
+        } else {
+            console.error('❌ errorSection no encontrado');
+        }
     }
 
     // Oculta sección de error
     hideError() {
-        this.elements.errorSection.style.display = 'none';
+        if (this.elements.errorSection) {
+            this.elements.errorSection.style.display = 'none';
+        } else {
+            console.error('❌ errorSection no encontrado');
+        }
     }
 
     // Muestra estado de validación en la visualización
     showValidationStatus(validationResult) {
-        if (!this.elements.validationStatus) return;
+        if (!this.elements.validationStatus) {
+            console.error('❌ validationStatus no encontrado');
+            return;
+        }
 
         const statusClass = validationResult.isValid ? 'valid' : 'invalid';
         const statusIcon = validationResult.isValid ? '✅' : '❌';
@@ -225,6 +265,8 @@ export class UnifiedDOMManager {
     hideValidationStatus() {
         if (this.elements.validationStatus) {
             this.elements.validationStatus.style.display = 'none';
+        } else {
+            console.error('❌ validationStatus no encontrado');
         }
     }
 
@@ -238,70 +280,48 @@ export class UnifiedDOMManager {
         this.hidePage('visualization');
     }
 
-    // Muestra un mensaje de éxito
+    // Muestra notificaciones (unificada)
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        const styles = this._getNotificationStyles(type);
+        notification.style.cssText = styles;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        const duration = type === 'error' ? 5000 : 3000;
+        setTimeout(() => notification.remove(), duration);
+    }
+
     showSuccessMessage(message) {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #059669, #047857);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-            z-index: 10000;
-            font-weight: 600;
-            animation: slideInRight 0.3s ease;
-        `;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
+        this.showNotification(message, 'success');
     }
 
-    // Muestra un mensaje de error
     showErrorMessage(message) {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
+        this.showNotification(message, 'error');
+    }
+
+    _getNotificationStyles(type) {
+        const baseStyles = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
             padding: 1rem 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
             z-index: 10000;
             font-weight: 600;
             animation: slideInRight 0.3s ease;
         `;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 5000);
+
+        const typeStyles = {
+            success: 'background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);',
+            error: 'background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);',
+            info: 'background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);'
+        };
+
+        return baseStyles + typeStyles[type] || typeStyles.info;
     }
 
-    // Valida que todos los elementos necesarios estén presentes
-    validateElements() {
-        const requiredElements = [
-            'fileInput', 'fileUploadArea', 'fileName', 'filePreview',
-            'validationResult', 'errorSection', 'uploadPage', 'visualizationPage'
-        ];
-
-        const missingElements = requiredElements.filter(id => !this.elements[id]);
-        
-        if (missingElements.length > 0) {
-            console.warn('Elementos del DOM faltantes:', missingElements);
-            return false;
-        }
-        
-        return true;
-    }
 
     // Obtiene el estado actual de la interfaz
     getInterfaceState() {

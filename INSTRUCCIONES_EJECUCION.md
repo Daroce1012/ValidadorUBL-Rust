@@ -1,5 +1,25 @@
 # Instrucciones de Ejecución del Validador UBL
 
+## 📋 **INFORMACIÓN IMPORTANTE**
+
+Este documento contiene **DOS SECCIONES**:
+
+1. **🔧 PARTE 1: COMPILACIÓN RUST → WEBASSEMBLY** (Pasos 1-7)
+   - Para compilar el código Rust a WebAssembly
+   - Solo necesario si modificas el código Rust
+   - Si ya tienes los archivos `.wasm` compilados, puedes saltar esta parte
+
+2. **🌐 PARTE 2: EJECUTAR APLICACIÓN WEB COMPLETA** (Pasos 8-10)
+   - Para ejecutar toda la aplicación web
+   - Incluye validación, visualización y PDF
+   - **ESTA ES LA PARTE PRINCIPAL**
+
+---
+
+## 🔧 **PARTE 1: COMPILACIÓN RUST → WEBASSEMBLY**
+
+> **⚠️ NOTA**: Esta sección es solo para compilar el código Rust a WebAssembly. Si ya tienes los archivos `.wasm` en la carpeta `rust/wasm-output/pkg/`, puedes saltar directamente a la **PARTE 2**.
+
 ## 📋 **PASO 1: INSTALAR RUST**
 
 ### 1.1 Descargar Rust
@@ -181,3 +201,96 @@ cargo run --bin validador-ubl --features cli -- --help
 3. **Verificar que todos los archivos de ejemplo existan** antes de probar
 4. **El WebAssembly se regenera cada vez** que se ejecuta `wasm-pack build`
 5. **Los archivos en `pkg/` reemplazan automáticamente** los existentes
+
+---
+
+## 🌐 **PARTE 2: EJECUTAR APLICACIÓN WEB COMPLETA**
+
+> **🎯 ESTA ES LA PARTE PRINCIPAL** - Para ejecutar toda la aplicación web (validación + visualización + PDF)
+
+## 📋 **PASO 8: INSTALAR NODE.JS**
+
+### 8.1 Descargar Node.js
+- Ve a: https://nodejs.org/
+- Descarga la versión LTS (recomendada)
+- Ejecuta el instalador
+
+### 8.2 Verificar instalación
+```bash
+node --version
+npm --version
+```
+**Resultado esperado**: Debe mostrar las versiones de Node.js y npm
+
+---
+
+## 📋 **PASO 9: INSTALAR DEPENDENCIAS Y COMPILAR**
+
+### 9.1 Instalar dependencias
+```bash
+npm install
+```
+**Resultado esperado**: Instalación de TypeScript y dependencias
+
+### 9.2 Compilar TypeScript
+```bash
+npm run build
+```
+**Resultado esperado**: 
+- Creación de archivos en carpeta `compiled/`
+- Archivos generados: `modules.js`, `visualizer.js`, `pdf-generator.js`, etc.
+
+---
+
+## 📋 **PASO 10: EJECUTAR APLICACIÓN WEB**
+
+### 10.1 Abrir con Live Server (RECOMENDADO)
+1. **Abrir VS Code** en la carpeta del proyecto
+2. **Instalar extensión Live Server** (si no la tienes)
+3. **Click derecho en `index.html`**
+4. **Seleccionar "Open with Live Server"**
+5. **Se abrirá automáticamente** en el navegador
+
+### 10.2 Alternativa: Servidor HTTP simple
+```bash
+# Si tienes Python instalado:
+python -m http.server 8000
+
+# Luego abrir: http://localhost:8000
+```
+
+### 10.3 Probar la aplicación
+1. **Arrastrar archivo XML UBL** a la zona de carga
+2. **Click "Validar Documento"** para verificar
+3. **Click "Visualizar Factura"** para ver datos
+4. **Click "Descargar PDF"** para generar documento
+
+---
+
+## 🚨 **SOLUCIÓN DE PROBLEMAS - APLICACIÓN WEB**
+
+### Error: "Módulo de visualización no disponible"
+- **Causa**: No se está ejecutando desde servidor HTTP
+- **Solución**: Usar Live Server en VS Code (no abrir HTML directamente)
+
+### Error: "Failed to fetch"
+- **Causa**: Archivos WebAssembly no encontrados
+- **Solución**: Verificar que existe `rust/wasm-output/pkg/validador_ubl.js`
+
+### Error: "TypeScript compilation failed"
+- **Causa**: Errores en código TypeScript
+- **Solución**: Ejecutar `npm run build` y revisar errores
+
+### Error: "Cannot resolve module"
+- **Causa**: Dependencias no instaladas
+- **Solución**: Ejecutar `npm install`
+
+---
+
+## 📝 **NOTAS IMPORTANTES - APLICACIÓN WEB**
+
+1. **Siempre usar Live Server** - No abrir HTML directamente
+2. **Verificar que WebAssembly esté compilado** - Archivos en `rust/wasm-output/pkg/`
+3. **Compilar TypeScript** antes de ejecutar - `npm run build`
+4. **Usar navegador moderno** - Chrome, Firefox, Safari, Edge
+5. **Archivos de ejemplo** están en `ejemplos_ubl/` para probar
