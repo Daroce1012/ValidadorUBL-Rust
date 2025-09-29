@@ -1,7 +1,7 @@
 /**
- * Visualizador Principal de Facturas UBL
+ * Visualizador Simplificado de Facturas UBL
  */
-import { UBLInvoice, VisualizationOptions, ValidationResult, PDFGenerationOptions } from './types.js';
+import { UBLInvoice, ValidationResult, PDFGenerationOptions } from './types.js';
 import { UBLXMLParser } from './xml-parser.js';
 import { PDFGenerator } from './pdf-generator.js';
 import { InvoiceFormatter } from './invoice-formatter.js';
@@ -36,7 +36,7 @@ export class UBLInvoiceVisualizer {
     /**
      * Muestra la factura en la interfaz
      */
-    private displayInvoice(invoice: UBLInvoice, options: VisualizationOptions): void {
+    private displayInvoice(invoice: UBLInvoice, options: { showValidationStatus?: boolean }): void {
         this.populateInvoiceDetails(invoice);
         this.populatePartiesInfo(invoice);
         this.populateInvoiceLines(invoice);
@@ -49,22 +49,6 @@ export class UBLInvoiceVisualizer {
 
     /**
      * Genera y descarga el PDF de la factura
-     */
-    public async generatePDF(options?: VisualizationOptions): Promise<void> {
-        if (!this.currentInvoice) {
-            throw new Error('No hay factura cargada para generar PDF');
-        }
-
-        const pdfOptions: PDFGenerationOptions = {
-            includeValidationReport: false,
-            ...options?.pdfOptions
-        };
-
-        await this.pdfGenerator.generateInvoicePDF(this.currentInvoice, pdfOptions);
-    }
-
-    /**
-     * Genera PDF desde el contenido HTML actual
      */
     public async generatePDFFromHTML(): Promise<void> {
         const invoiceContent = document.querySelector('.invoice-content') as HTMLElement;
@@ -87,13 +71,6 @@ export class UBLInvoiceVisualizer {
     }
 
     /**
-     * Obtiene el resultado de validación actual
-     */
-    public getValidationResult(): ValidationResult | null {
-        return this.validationResult;
-    }
-
-    /**
      * Verifica si hay una factura cargada
      */
     public hasInvoice(): boolean {
@@ -108,7 +85,8 @@ export class UBLInvoiceVisualizer {
         this.validationResult = null;
     }
 
-    // Métodos privados para populación de la interfaz
+    // === MÉTODOS DE POBLACIÓN DE INTERFAZ ===
+
     private populateInvoiceDetails(invoice: UBLInvoice): void {
         const invoiceNumberEl = document.getElementById('invoiceNumber');
         const invoiceDateEl = document.getElementById('invoiceDate');
@@ -190,42 +168,31 @@ export class UBLInvoiceVisualizer {
      * Muestra un mensaje de éxito
      */
     public showSuccessMessage(message: string): void {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #059669, #047857);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-            z-index: 10000;
-            font-weight: 600;
-            animation: slideInRight 0.3s ease;
-        `;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
+        this.showNotification(message, 'success');
     }
 
     /**
      * Muestra un mensaje de error
      */
     public showErrorMessage(message: string): void {
+        this.showNotification(message, 'error');
+    }
+
+    private showNotification(message: string, type: 'success' | 'error'): void {
         const notification = document.createElement('div');
+        const colors = type === 'success' 
+            ? { bg: 'linear-gradient(135deg, #059669, #047857)', shadow: 'rgba(5, 150, 105, 0.3)' }
+            : { bg: 'linear-gradient(135deg, #ef4444, #dc2626)', shadow: 'rgba(239, 68, 68, 0.3)' };
+            
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: ${colors.bg};
             color: white;
             padding: 1rem 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 4px 12px ${colors.shadow};
             z-index: 10000;
             font-weight: 600;
             animation: slideInRight 0.3s ease;
@@ -235,6 +202,6 @@ export class UBLInvoiceVisualizer {
         
         setTimeout(() => {
             notification.remove();
-        }, 5000);
+        }, type === 'success' ? 3000 : 5000);
     }
 }

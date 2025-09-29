@@ -1,8 +1,9 @@
 /**
- * Definiciones de tipos para la aplicación UBL unificada
+ * Definiciones de tipos esenciales para la aplicación UBL
  */
 
-// Definiciones de tipos para la aplicación UBL
+// === TIPOS PRINCIPALES DE UBL ===
+
 export interface UBLInvoice {
     id: string;
     issueDate: string;
@@ -64,11 +65,15 @@ export interface UBLLegalMonetaryTotals {
     chargeTotalAmount?: number;
 }
 
+// === TIPOS DE VALIDACIÓN ===
+
 export interface ValidationResult {
     isValid: boolean;
     message: string;
     errors?: string[];
 }
+
+// === TIPOS DE VISUALIZACIÓN ===
 
 export interface VisualizationOptions {
     showValidationStatus?: boolean;
@@ -86,38 +91,4 @@ export interface PDFGenerationOptions {
 export interface TotalLine {
     label: string;
     value: number;
-}
-
-export interface AppState {
-    currentFile: File | null;
-    xmlContent: string | null;
-    invoice: UBLInvoice | null;
-    validationResult: ValidationResult | null;
-    isProcessing: boolean;
-    currentView: 'upload' | 'validation' | 'visualization';
-}
-
-// Tipos para eventos de la aplicación
-export interface FileSelectEvent {
-    file: File;
-    content: string;
-}
-
-export interface ValidationCompleteEvent {
-    result: ValidationResult;
-    xmlContent: string;
-}
-
-export interface VisualizationCompleteEvent {
-    invoice: UBLInvoice;
-    validationResult?: ValidationResult;
-}
-
-// Tipos para configuración de la aplicación
-export interface AppConfig {
-    maxFileSize: number; // en MB
-    supportedFileTypes: string[];
-    enablePDFExport: boolean;
-    enableValidation: boolean;
-    enableVisualization: boolean;
 }

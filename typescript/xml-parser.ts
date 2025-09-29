@@ -1,5 +1,6 @@
 /**
- * Parser XML UBL - Convierte documentos XML UBL en objetos TypeScript tipados
+ * Parser XML UBL Simplificado
+ * Convierte documentos XML UBL en objetos TypeScript tipados
  */
 import { UBLInvoice, UBLParty, UBLInvoiceLine, UBLLegalMonetaryTotals, UBLItem, UBLPrice, UBLContact } from './types.js';
 
@@ -23,8 +24,10 @@ export class UBLXMLParser {
         return this.extractInvoiceData(invoiceElement);
     }
 
+    /**
+     * Busca un elemento por nombre local (ignorando namespace)
+     */
     private findElementByLocalName(parent: Element, localName: string): Element | null {
-        // Buscar todos los elementos y encontrar el que tenga el nombre local correcto
         const elements = parent.querySelectorAll('*');
         for (const element of elements) {
             if (element.localName === localName) {
@@ -34,52 +37,46 @@ export class UBLXMLParser {
         return null;
     }
 
+    /**
+     * Busca un elemento usando selector o nombre local
+     */
+    private findElement(parent: Element, selector: string): Element | null {
+        return parent.querySelector(selector) || 
+               this.findElementByLocalName(parent, selector.replace(/^[^:]*:/, ''));
+    }
+
+    /**
+     * Obtiene el contenido de texto de un elemento
+     */
+    private getTextContent(parent: Element, selector: string): string {
+        const element = this.findElement(parent, selector);
+        return element?.textContent?.trim() || '';
+    }
+
+    /**
+     * Obtiene el contenido numérico de un elemento
+     */
+    private getNumberContent(parent: Element, selector: string): number {
+        const text = this.getTextContent(parent, selector);
+        return text ? parseFloat(text) : 0;
+    }
+
+    /**
+     * Extrae los datos principales de la factura
+     */
     private extractInvoiceData(invoiceElement: Element): UBLInvoice {
-        const getTextContent = (selector: string): string => {
-            // Intentar primero con selector exacto
-            let element = invoiceElement.querySelector(selector);
-            
-            // Si no se encuentra, buscar por nombre local (ignorando namespace)
-            if (!element) {
-                const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
-                element = this.findElementByLocalName(invoiceElement, localName);
-            }
-            
-            return element ? element.textContent?.trim() || '' : '';
-        };
-
-        const getNumberContent = (selector: string): number => {
-            const text = getTextContent(selector);
-            return text ? parseFloat(text) : 0;
-        };
-
-        const getElement = (selector: string): Element | null => {
-            // Intentar primero con selector exacto
-            let element = invoiceElement.querySelector(selector);
-            
-            // Si no se encuentra, buscar por nombre local (ignorando namespace)
-            if (!element) {
-                const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
-                element = this.findElementByLocalName(invoiceElement, localName);
-            }
-            
-            return element;
-        };
-
-        const dueDate = getTextContent('DueDate');
-        const buyerReference = getTextContent('BuyerReference');
+        const dueDate = this.getTextContent(invoiceElement, 'DueDate');
+        const buyerReference = this.getTextContent(invoiceElement, 'BuyerReference');
         
         // Buscar moneda en diferentes lugares
-        let documentCurrencyCode = getTextContent('DocumentCurrencyCode');
+        let documentCurrencyCode = this.getTextContent(invoiceElement, 'DocumentCurrencyCode');
         if (!documentCurrencyCode) {
-            // Buscar en LineExtensionAmount
-            const lineExtensionElement = getElement('LineExtensionAmount');
+            const lineExtensionElement = this.findElement(invoiceElement, 'LineExtensionAmount');
             if (lineExtensionElement) {
                 documentCurrencyCode = lineExtensionElement.getAttribute('currencyID') || '';
             }
         }
         if (!documentCurrencyCode) {
-            // Buscar en cualquier elemento con atributo currencyID
             const currencyElements = invoiceElement.querySelectorAll('[currencyID]');
             if (currencyElements.length > 0) {
                 const firstElement = currencyElements[0];
@@ -90,21 +87,24 @@ export class UBLXMLParser {
         }
 
         return {
-            id: getTextContent('ID'),
-            issueDate: getTextContent('IssueDate'),
+            id: this.getTextContent(invoiceElement, 'ID'),
+            issueDate: this.getTextContent(invoiceElement, 'IssueDate'),
             ...(dueDate && { dueDate }),
-            invoiceTypeCode: getTextContent('InvoiceTypeCode'),
-            documentCurrencyCode: documentCurrencyCode || 'EUR', // Fallback a EUR
+            invoiceTypeCode: this.getTextContent(invoiceElement, 'InvoiceTypeCode'),
+            documentCurrencyCode: documentCurrencyCode || 'EUR',
             ...(buyerReference && { buyerReference }),
-            accountingSupplierParty: this.extractParty(invoiceElement, 'AccountingSupplierParty', getElement),
-            accountingCustomerParty: this.extractParty(invoiceElement, 'AccountingCustomerParty', getElement),
+            accountingSupplierParty: this.extractParty(invoiceElement, 'AccountingSupplierParty'),
+            accountingCustomerParty: this.extractParty(invoiceElement, 'AccountingCustomerParty'),
             invoiceLines: this.extractInvoiceLines(invoiceElement),
             legalMonetaryTotals: this.extractMonetaryTotals(invoiceElement)
         };
     }
 
-    private extractParty(invoiceElement: Element, partySelector: string, getElement: (selector: string) => Element | null): UBLParty {
-        const partyElement = getElement(partySelector);
+    /**
+     * Extrae información de una parte (proveedor/cliente)
+     */
+    private extractParty(invoiceElement: Element, partySelector: string): UBLParty {
+        const partyElement = this.findElement(invoiceElement, partySelector);
         if (!partyElement) {
             return {
                 partyName: 'No disponible',
@@ -112,37 +112,26 @@ export class UBLXMLParser {
             };
         }
 
-        const getTextContent = (selector: string): string => {
-            // Intentar primero con selector exacto
-            let element = partyElement.querySelector(selector);
-            
-            // Si no se encuentra, buscar por nombre local (ignorando namespace)
-            if (!element) {
-                const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
-                element = this.findElementByLocalName(partyElement, localName);
-            }
-            
-            return element ? element.textContent?.trim() || '' : '';
-        };
+        const partyName = this.getTextContent(partyElement, 'PartyName') || this.getTextContent(partyElement, 'Name');
+        const partyIdentification = this.getTextContent(partyElement, 'ID');
 
-        const partyName = getTextContent('PartyName') || getTextContent('Name');
-        const partyIdentification = getTextContent('ID');
-
+        // Extraer dirección postal
         const addressElement = partyElement.querySelector('PostalAddress');
         const postalAddress: any = {};
         if (addressElement) {
-            postalAddress.streetName = getTextContent('StreetName') || undefined;
-            postalAddress.cityName = getTextContent('CityName') || undefined;
-            postalAddress.postalZone = getTextContent('PostalZone') || undefined;
-            postalAddress.countryCode = getTextContent('CountryCode') || undefined;
+            postalAddress.streetName = this.getTextContent(addressElement, 'StreetName') || undefined;
+            postalAddress.cityName = this.getTextContent(addressElement, 'CityName') || undefined;
+            postalAddress.postalZone = this.getTextContent(addressElement, 'PostalZone') || undefined;
+            postalAddress.countryCode = this.getTextContent(addressElement, 'CountryCode') || undefined;
         }
 
+        // Extraer información de contacto
         const contactElement = partyElement.querySelector('Contact');
         let contact: UBLContact | undefined = undefined;
         if (contactElement) {
-            const contactName = getTextContent('Name');
-            const contactTelephone = getTextContent('Telephone');
-            const contactEmail = getTextContent('ElectronicMail');
+            const contactName = this.getTextContent(contactElement, 'Name');
+            const contactTelephone = this.getTextContent(contactElement, 'Telephone');
+            const contactEmail = this.getTextContent(contactElement, 'ElectronicMail');
             
             contact = {};
             if (contactName) contact.name = contactName;
@@ -158,6 +147,9 @@ export class UBLXMLParser {
         };
     }
 
+    /**
+     * Extrae las líneas de la factura
+     */
     private extractInvoiceLines(invoiceElement: Element): UBLInvoiceLine[] {
         // Buscar líneas de factura con diferentes namespaces
         let lineElements = invoiceElement.querySelectorAll('InvoiceLine');
@@ -170,56 +162,32 @@ export class UBLXMLParser {
                     invoiceLineElements.push(element);
                 }
             }
-            // Usar array directamente en lugar de NodeList
             lineElements = invoiceLineElements as any;
         }
         
         const lines: UBLInvoiceLine[] = [];
 
         lineElements.forEach(lineElement => {
-            const getTextContent = (selector: string): string => {
-                // Intentar primero con selector exacto
-                let element = lineElement.querySelector(selector);
-                
-                // Si no se encuentra, buscar por nombre local (ignorando namespace)
-                if (!element) {
-                    const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
-                    element = this.findElementByLocalName(lineElement, localName);
-                }
-                
-                return element ? element.textContent?.trim() || '' : '';
-            };
-
-            const getNumberContent = (selector: string): number => {
-                const text = getTextContent(selector);
-                return text ? parseFloat(text) : 0;
-            };
-
-            let itemElement = lineElement.querySelector('Item');
-            if (!itemElement) {
-                itemElement = this.findElementByLocalName(lineElement, 'Item');
-            }
-            const itemName = getTextContent('Name');
-            const sellersItemId = getTextContent('SellersItemIdentification');
+            const itemName = this.getTextContent(lineElement, 'Name');
+            const sellersItemId = this.getTextContent(lineElement, 'SellersItemIdentification');
             
             const item: UBLItem = {
-                description: getTextContent('Description'),
+                description: this.getTextContent(lineElement, 'Description'),
                 ...(itemName && { name: itemName }),
                 ...(sellersItemId && { sellersItemIdentification: sellersItemId })
             };
 
-            const priceElement = lineElement.querySelector('Price');
-            const baseQuantity = getNumberContent('BaseQuantity');
+            const baseQuantity = this.getNumberContent(lineElement, 'BaseQuantity');
             
             const price: UBLPrice = {
-                priceAmount: getNumberContent('PriceAmount'),
+                priceAmount: this.getNumberContent(lineElement, 'PriceAmount'),
                 ...(baseQuantity > 0 && { baseQuantity })
             };
 
             lines.push({
-                id: getTextContent('ID'),
-                quantity: getNumberContent('InvoicedQuantity'),
-                lineExtensionAmount: getNumberContent('LineExtensionAmount'),
+                id: this.getTextContent(lineElement, 'ID'),
+                quantity: this.getNumberContent(lineElement, 'InvoicedQuantity'),
+                lineExtensionAmount: this.getNumberContent(lineElement, 'LineExtensionAmount'),
                 item,
                 price
             });
@@ -228,21 +196,18 @@ export class UBLXMLParser {
         return lines;
     }
 
+    /**
+     * Extrae los totales monetarios
+     */
     private extractMonetaryTotals(invoiceElement: Element): UBLLegalMonetaryTotals {
-        const getNumberContent = (selector: string): number => {
-            const element = invoiceElement.querySelector(selector);
-            const text = element ? element.textContent?.trim() || '' : '';
-            return text ? parseFloat(text) : 0;
-        };
-
-        const lineExtensionAmount = getNumberContent('LineExtensionAmount');
-        const payableAmount = getNumberContent('PayableAmount');
-        const allowanceTotal = getNumberContent('AllowanceTotalAmount');
-        const chargeTotal = getNumberContent('ChargeTotalAmount');
+        const lineExtensionAmount = this.getNumberContent(invoiceElement, 'LineExtensionAmount');
+        const payableAmount = this.getNumberContent(invoiceElement, 'PayableAmount');
+        const allowanceTotal = this.getNumberContent(invoiceElement, 'AllowanceTotalAmount');
+        const chargeTotal = this.getNumberContent(invoiceElement, 'ChargeTotalAmount');
         
         // Si no hay TaxExclusiveAmount o TaxInclusiveAmount, usar LineExtensionAmount como base
-        let taxExclusiveAmount = getNumberContent('TaxExclusiveAmount');
-        let taxInclusiveAmount = getNumberContent('TaxInclusiveAmount');
+        let taxExclusiveAmount = this.getNumberContent(invoiceElement, 'TaxExclusiveAmount');
+        let taxInclusiveAmount = this.getNumberContent(invoiceElement, 'TaxInclusiveAmount');
         
         // Si no se encuentran los campos de impuestos, usar LineExtensionAmount como fallback
         if (taxExclusiveAmount === 0 && lineExtensionAmount > 0) {

@@ -1,5 +1,5 @@
 /**
- * Formateador de Facturas UBL - Utilidades para formatear datos de facturas
+ * Formateador Simplificado de Facturas UBL
  */
 import { UBLInvoice, UBLParty, UBLLegalMonetaryTotals, TotalLine } from './types.js';
 
@@ -124,23 +124,5 @@ export class InvoiceFormatter {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
-    }
-
-
-    /**
-     * Genera un resumen de la factura para mostrar en la interfaz
-     */
-    public generateInvoiceSummary(invoice: UBLInvoice): string {
-        const totalItems = invoice.invoiceLines.length;
-        const totalAmount = invoice.legalMonetaryTotals.payableAmount;
-        
-        return `
-            <div class="invoice-summary">
-                <h3>Resumen de la Factura</h3>
-                <p><strong>Número de elementos:</strong> ${totalItems}</p>
-                <p><strong>Total a pagar:</strong> ${this.formatCurrency(totalAmount, invoice.documentCurrencyCode)}</p>
-                <p><strong>Fecha de emisión:</strong> ${this.formatDate(invoice.issueDate)}</p>
-            </div>
-        `;
     }
 }

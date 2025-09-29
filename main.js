@@ -1,13 +1,13 @@
 /**
- * Punto de entrada principal de la aplicación unificada
+ * Punto de entrada principal simplificado
  * Integra validador UBL y visualizador de facturas
  */
 
-import { UnifiedAppController } from './app-controller.js';
+import { AppController } from './app-controller-unified.js';
 
-// Inicializar la aplicación unificada
+// Inicializar la aplicación
 async function initializeApp() {
-    const app = new UnifiedAppController();
+    const app = new AppController();
     await app.initialize();
 }
 
