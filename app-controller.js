@@ -295,14 +295,4 @@ export class UnifiedAppController {
         }
     }
 
-    // Obtiene el estado actual de la aplicación
-    getAppState() {
-        return {
-            currentFile: this.fileHandler.hasFile(),
-            currentView: this.currentView,
-            isProcessing: this.processing,
-            validationResult: this.validationResult,
-            hasInvoice: this.visualizer ? this.visualizer.hasInvoice() : false
-        };
-    }
 }

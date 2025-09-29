@@ -2,7 +2,7 @@
  * Validador UBL
  * Maneja la validación de documentos UBL usando WebAssembly
  */
-import init, { validar_ubl } from './rust/wasm-output/pkg/validador_ubl.js';
+import init, { validar_ubl } from './rust/wasm-output/validador_ubl.js';
 import { delay, Logger } from './utils.js';
 
 export class UBLValidator {

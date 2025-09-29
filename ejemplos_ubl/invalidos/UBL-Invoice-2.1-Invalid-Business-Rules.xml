@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+    
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+    <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+    <cbc:ID>INV-2024-001</cbc:ID>
+    <!-- ERROR: IssueDate en el futuro -->
+    <cbc:IssueDate>2025-12-31</cbc:IssueDate>
+    <cbc:InvoiceTypeCode listID="UNCL1001">380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode listID="ISO4217">EUR</cbc:DocumentCurrencyCode>
+    
+    <!-- ERROR: AccountingSupplierParty con mismo ID que cliente -->
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="FR:SIRET">12345678901234</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="FR:SIRET">12345678901234</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Empresa Proveedora S.A.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Rue de la Paix</cbc:StreetName>
+                <cbc:CityName>París</cbc:CityName>
+                <cbc:PostalZone>75001</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">FR</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>FR12345678901</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    
+    <!-- ERROR: AccountingCustomerParty con mismo ID que proveedor -->
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="FR:SIRET">12345678901234</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="FR:SIRET">12345678901234</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Cliente Corporativo S.L.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Avenida Principal</cbc:StreetName>
+                <cbc:CityName>Madrid</cbc:CityName>
+                <cbc:PostalZone>28001</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">ES</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ES98765432109</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    
+    <!-- ERROR: PaymentMeans con fecha de vencimiento anterior a la fecha de emisión -->
+    <cac:PaymentMeans>
+        <cbc:PaymentMeansCode listID="UNCL4461">30</cbc:PaymentMeansCode>
+        <cbc:PaymentDueDate>2024-09-01</cbc:PaymentDueDate>
+        <cac:PayeeFinancialAccount>
+            <cbc:ID>FR1420041010050500013M02606</cbc:ID>
+        </cac:PayeeFinancialAccount>
+    </cac:PaymentMeans>
+    
+    <!-- ERROR: TaxTotal con impuestos inconsistentes -->
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="EUR">240.00</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="EUR">1000.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="EUR">240.00</cbc:TaxAmount>
+            <cbc:Percent>24.00</cbc:Percent>
+            <cac:TaxCategory>
+                <cbc:ID schemeID="UNCL5305">S</cbc:ID>
+                <cbc:Percent>24.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+        <!-- ERROR: Segundo TaxSubtotal con mismo tipo de impuesto -->
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="EUR">500.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="EUR">120.00</cbc:TaxAmount>
+            <cbc:Percent>24.00</cbc:Percent>
+            <cac:TaxCategory>
+                <cbc:ID schemeID="UNCL5305">S</cbc:ID>
+                <cbc:Percent>24.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    
+    <!-- ERROR: LegalMonetaryTotal con totales inconsistentes -->
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="EUR">1000.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="EUR">1240.00</cbc:TaxInclusiveAmount>
+        <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+        <cbc:ChargeTotalAmount currencyID="EUR">0.00</cbc:ChargeTotalAmount>
+        <cbc:PrepaidAmount currencyID="EUR">0.00</cbc:PrepaidAmount>
+        <!-- ERROR: PayableAmount no coincide con TaxInclusiveAmount -->
+        <cbc:PayableAmount currencyID="EUR">1300.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    
+    <!-- ERROR: InvoiceLine con cantidades inconsistentes -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">10</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Producto A</cbc:Description>
+            <cbc:Name>Producto A</cbc:Name>
+        </cac:Item>
+        <cac:Price>
+            <!-- ERROR: PriceAmount no coincide con LineExtensionAmount / InvoicedQuantity -->
+            <cbc:PriceAmount currencyID="EUR">60.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- ERROR: Segunda línea con ID duplicado -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">5</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">300.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Producto B</cbc:Description>
+            <cbc:Name>Producto B</cbc:Name>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">60.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+</Invoice>

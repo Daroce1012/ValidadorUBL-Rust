@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+         xmlns:ccts="urn:un:unece:uncefact:documentation:2"
+         xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2"
+         xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2">
+    
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+    <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+    <cbc:ID>INV-INT-2024-002</cbc:ID>
+    <cbc:IssueDate>2024-09-29</cbc:IssueDate>
+    <cbc:IssueTime>10:15:00</cbc:IssueTime>
+    <cbc:InvoiceTypeCode listID="UNCL1001">380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode listID="ISO4217">USD</cbc:DocumentCurrencyCode>
+    <cbc:TaxCurrencyCode listID="ISO4217">USD</cbc:TaxCurrencyCode>
+    <cbc:LineCountNumeric>2</cbc:LineCountNumeric>
+    
+    <!-- Referencias adicionales -->
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>PO-2024-789</cbc:ID>
+        <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode>
+        <cbc:DocumentDescription>Orden de compra internacional</cbc:DocumentDescription>
+    </cac:AdditionalDocumentReference>
+    
+    <!-- Información del proveedor (empresa estadounidense) -->
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="US:EIN">12-3456789</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="US:EIN">12-3456789</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Global Tech Solutions Inc.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>123 Technology Drive</cbc:StreetName>
+                <cbc:AdditionalStreetName>Suite 500</cbc:AdditionalStreetName>
+                <cbc:CityName>San Francisco</cbc:CityName>
+                <cbc:PostalZone>94105</cbc:PostalZone>
+                <cbc:CountrySubentity>CA</cbc:CountrySubentity>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">US</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>12-3456789</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>Global Tech Solutions Inc.</cbc:RegistrationName>
+                <cbc:CompanyID>12-3456789</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:Name>John Smith</cbc:Name>
+                <cbc:Telephone>+1-415-555-0123</cbc:Telephone>
+                <cbc:ElectronicMail>john.smith@globaltech.com</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    
+    <!-- Información del cliente (empresa mexicana) -->
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="MX:RFC">ABC123456789</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="MX:RFC">ABC123456789</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Empresa Mexicana S.A. de C.V.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Av. Reforma 123</cbc:StreetName>
+                <cbc:AdditionalStreetName>Piso 15</cbc:AdditionalStreetName>
+                <cbc:CityName>Ciudad de México</cbc:CityName>
+                <cbc:PostalZone>06600</cbc:PostalZone>
+                <cbc:CountrySubentity>CDMX</cbc:CountrySubentity>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">MX</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ABC123456789</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>Empresa Mexicana S.A. de C.V.</cbc:RegistrationName>
+                <cbc:CompanyID>ABC123456789</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:Name>María González</cbc:Name>
+                <cbc:Telephone>+52-55-1234-5678</cbc:Telephone>
+                <cbc:ElectronicMail>maria.gonzalez@empresa.com.mx</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    
+    <!-- Información de entrega -->
+    <cac:Delivery>
+        <cbc:ActualDeliveryDate>2024-09-28</cbc:ActualDeliveryDate>
+        <cac:DeliveryAddress>
+            <cbc:StreetName>Av. Insurgentes Sur 1234</cbc:StreetName>
+            <cbc:AdditionalStreetName>Edificio Corporativo</cbc:AdditionalStreetName>
+            <cbc:CityName>Ciudad de México</cbc:CityName>
+            <cbc:PostalZone>03100</cbc:PostalZone>
+            <cbc:CountrySubentity>CDMX</cbc:CountrySubentity>
+            <cac:Country>
+                <cbc:IdentificationCode listID="ISO3166-1:Alpha2">MX</cbc:IdentificationCode>
+            </cac:Country>
+        </cac:DeliveryAddress>
+        <cac:DeliveryParty>
+            <cac:PartyName>
+                <cbc:Name>Almacén Central México</cbc:Name>
+            </cac:PartyName>
+        </cac:DeliveryParty>
+    </cac:Delivery>
+    
+    <!-- Información de pago -->
+    <cac:PaymentMeans>
+        <cbc:PaymentMeansCode listID="UNCL4461">42</cbc:PaymentMeansCode>
+        <cbc:PaymentDueDate>2024-10-29</cbc:PaymentDueDate>
+        <cac:PayeeFinancialAccount>
+            <cbc:ID>US12345678901234567890</cbc:ID>
+            <cac:FinancialInstitutionBranch>
+                <cbc:ID>123456789</cbc:ID>
+                <cac:FinancialInstitution>
+                    <cbc:ID>123456789</cbc:ID>
+                    <cbc:Name>Bank of America</cbc:Name>
+                </cac:FinancialInstitution>
+            </cac:FinancialInstitutionBranch>
+        </cac:PayeeFinancialAccount>
+    </cac:PaymentMeans>
+    
+    <!-- Información fiscal (sin IVA para exportación) -->
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="USD">0.00</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="USD">2000.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="USD">0.00</cbc:TaxAmount>
+            <cbc:Percent>0.00</cbc:Percent>
+            <cac:TaxCategory>
+                <cbc:ID schemeID="UNCL5305">E</cbc:ID>
+                <cbc:Percent>0.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                    <cbc:Name>Value Added Tax</cbc:Name>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    
+    <!-- Totales legales -->
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="USD">2000.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="USD">2000.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="USD">2000.00</cbc:TaxInclusiveAmount>
+        <cbc:AllowanceTotalAmount currencyID="USD">0.00</cbc:AllowanceTotalAmount>
+        <cbc:ChargeTotalAmount currencyID="USD">0.00</cbc:ChargeTotalAmount>
+        <cbc:PrepaidAmount currencyID="USD">0.00</cbc:PrepaidAmount>
+        <cbc:PayableAmount currencyID="USD">2000.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    
+    <!-- Líneas de factura -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">5</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="USD">1500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Software License - Enterprise Edition</cbc:Description>
+            <cbc:Name>Software License</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>SW-ENT-001</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:CommodityClassification>
+                <cbc:ItemClassificationCode listID="CPV">48000000-8</cbc:ItemClassificationCode>
+            </cac:CommodityClassification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="USD">300.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <cac:InvoiceLine>
+        <cbc:ID>2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">10</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="USD">500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Technical Support - Annual Contract</cbc:Description>
+            <cbc:Name>Technical Support</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>SUP-ANN-001</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="USD">50.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+</Invoice>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+    
+    <!-- ERROR: Falta UBLVersionID (obligatorio) -->
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+    
+    <!-- ERROR: ID vacío (debe tener valor) -->
+    <cbc:ID></cbc:ID>
+    
+    <!-- ERROR: IssueDate con formato incorrecto (debe ser YYYY-MM-DD) -->
+    <cbc:IssueDate>29/09/2024</cbc:IssueDate>
+    
+    <!-- ERROR: InvoiceTypeCode con valor inválido (debe ser de la lista UNCL1001) -->
+    <cbc:InvoiceTypeCode listID="UNCL1001">999</cbc:InvoiceTypeCode>
+    
+    <!-- ERROR: DocumentCurrencyCode con código inválido (debe ser de ISO4217) -->
+    <cbc:DocumentCurrencyCode listID="ISO4217">XXX</cbc:DocumentCurrencyCode>
+    
+    <!-- ERROR: Falta AccountingSupplierParty (obligatorio) -->
+    
+    <!-- ERROR: Falta AccountingCustomerParty (obligatorio) -->
+    
+    <!-- ERROR: Falta LegalMonetaryTotal (obligatorio) -->
+    
+    <!-- ERROR: Falta InvoiceLine (debe tener al menos una línea) -->
+    
+</Invoice>

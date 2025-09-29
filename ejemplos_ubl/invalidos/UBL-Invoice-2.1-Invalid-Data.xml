@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+    
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+    <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+    <cbc:ID>INV-2024-001</cbc:ID>
+    <cbc:IssueDate>2024-09-29</cbc:IssueDate>
+    <cbc:InvoiceTypeCode listID="UNCL1001">380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode listID="ISO4217">EUR</cbc:DocumentCurrencyCode>
+    
+    <!-- ERROR: AccountingSupplierParty con datos inválidos -->
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <!-- ERROR: EndpointID con formato incorrecto -->
+            <cbc:EndpointID schemeID="FR:SIRET">12345</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <!-- ERROR: ID con formato incorrecto para SIRET -->
+                <cbc:ID schemeID="FR:SIRET">12345</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <!-- ERROR: Name vacío -->
+                <cbc:Name></cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <!-- ERROR: Country con código incorrecto -->
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">XX</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <!-- ERROR: CompanyID con formato incorrecto para VAT -->
+                <cbc:CompanyID>INVALID-VAT</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    
+    <!-- ERROR: AccountingCustomerParty con datos inválidos -->
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="ES:CIF">A12345678</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="ES:CIF">A12345678</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Cliente Test</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">ES</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ES12345678Z</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    
+    <!-- ERROR: TaxTotal con cálculos incorrectos -->
+    <cac:TaxTotal>
+        <!-- ERROR: TaxAmount no coincide con el cálculo (debería ser 240.00) -->
+        <cbc:TaxAmount currencyID="EUR">200.00</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="EUR">1000.00</cbc:TaxableAmount>
+            <!-- ERROR: TaxAmount incorrecto -->
+            <cbc:TaxAmount currencyID="EUR">200.00</cbc:TaxAmount>
+            <!-- ERROR: Percent incorrecto (debería ser 24.00) -->
+            <cbc:Percent>20.00</cbc:Percent>
+            <cac:TaxCategory>
+                <cbc:ID schemeID="UNCL5305">S</cbc:ID>
+                <cbc:Percent>24.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    
+    <!-- ERROR: LegalMonetaryTotal con totales incorrectos -->
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="EUR">1000.00</cbc:TaxExclusiveAmount>
+        <!-- ERROR: TaxInclusiveAmount incorrecto (debería ser 1200.00) -->
+        <cbc:TaxInclusiveAmount currencyID="EUR">1200.00</cbc:TaxInclusiveAmount>
+        <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+        <cbc:ChargeTotalAmount currencyID="EUR">0.00</cbc:ChargeTotalAmount>
+        <cbc:PrepaidAmount currencyID="EUR">0.00</cbc:PrepaidAmount>
+        <!-- ERROR: PayableAmount incorrecto -->
+        <cbc:PayableAmount currencyID="EUR">1200.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    
+    <!-- ERROR: InvoiceLine con datos inválidos -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <!-- ERROR: InvoicedQuantity con valor negativo -->
+        <cbc:InvoicedQuantity unitCode="C62">-5</cbc:InvoicedQuantity>
+        <!-- ERROR: LineExtensionAmount con valor incorrecto -->
+        <cbc:LineExtensionAmount currencyID="EUR">250.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Producto Test</cbc:Description>
+            <cbc:Name>Producto Test</cbc:Name>
+        </cac:Item>
+        <cac:Price>
+            <!-- ERROR: PriceAmount con valor incorrecto -->
+            <cbc:PriceAmount currencyID="EUR">50.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+</Invoice>

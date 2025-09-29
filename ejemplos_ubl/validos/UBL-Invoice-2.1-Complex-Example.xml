@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+         xmlns:ccts="urn:un:unece:uncefact:documentation:2"
+         xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2"
+         xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2">
+    
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+    <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+    <cbc:ID>INV-2024-001</cbc:ID>
+    <cbc:IssueDate>2024-09-29</cbc:IssueDate>
+    <cbc:IssueTime>14:30:00</cbc:IssueTime>
+    <cbc:InvoiceTypeCode listID="UNCL1001">380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode listID="ISO4217">EUR</cbc:DocumentCurrencyCode>
+    <cbc:TaxCurrencyCode listID="ISO4217">EUR</cbc:TaxCurrencyCode>
+    <cbc:AccountingCostCode>AC-001</cbc:AccountingCostCode>
+    <cbc:LineCountNumeric>3</cbc:LineCountNumeric>
+    
+    <!-- Referencias adicionales -->
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>REF-001</cbc:ID>
+        <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode>
+        <cbc:DocumentDescription>Orden de compra</cbc:DocumentDescription>
+    </cac:AdditionalDocumentReference>
+    
+    <!-- Información del proveedor -->
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="FR:SIRET">12345678901234</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="FR:SIRET">12345678901234</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Empresa Proveedora S.A.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Rue de la Paix</cbc:StreetName>
+                <cbc:AdditionalStreetName>Edificio Central</cbc:AdditionalStreetName>
+                <cbc:CityName>París</cbc:CityName>
+                <cbc:PostalZone>75001</cbc:PostalZone>
+                <cbc:CountrySubentity>Île-de-France</cbc:CountrySubentity>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">FR</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>FR12345678901</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>Empresa Proveedora S.A.</cbc:RegistrationName>
+                <cbc:CompanyID>12345678901234</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:Name>Juan Pérez</cbc:Name>
+                <cbc:Telephone>+33-1-2345-6789</cbc:Telephone>
+                <cbc:ElectronicMail>juan.perez@empresa.com</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    
+    <!-- Información del cliente -->
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="FR:SIRET">98765432109876</cbc:EndpointID>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="FR:SIRET">98765432109876</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Cliente Corporativo S.L.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Avenida Principal</cbc:StreetName>
+                <cbc:AdditionalStreetName>Torre Norte, Piso 15</cbc:AdditionalStreetName>
+                <cbc:CityName>Madrid</cbc:CityName>
+                <cbc:PostalZone>28001</cbc:PostalZone>
+                <cbc:CountrySubentity>Madrid</cbc:CountrySubentity>
+                <cac:Country>
+                    <cbc:IdentificationCode listID="ISO3166-1:Alpha2">ES</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ES98765432109</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>Cliente Corporativo S.L.</cbc:RegistrationName>
+                <cbc:CompanyID>98765432109876</cbc:CompanyID>
+            </cac:PartyLegalEntity>
+            <cac:Contact>
+                <cbc:Name>María García</cbc:Name>
+                <cbc:Telephone>+34-91-123-4567</cbc:Telephone>
+                <cbc:ElectronicMail>maria.garcia@cliente.com</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    
+    <!-- Información de entrega -->
+    <cac:Delivery>
+        <cbc:ActualDeliveryDate>2024-09-28</cbc:ActualDeliveryDate>
+        <cac:DeliveryAddress>
+            <cbc:StreetName>Calle de la Entrega</cbc:StreetName>
+            <cbc:AdditionalStreetName>Almacén Central</cbc:AdditionalStreetName>
+            <cbc:CityName>Barcelona</cbc:CityName>
+            <cbc:PostalZone>08001</cbc:PostalZone>
+            <cbc:CountrySubentity>Cataluña</cbc:CountrySubentity>
+            <cac:Country>
+                <cbc:IdentificationCode listID="ISO3166-1:Alpha2">ES</cbc:IdentificationCode>
+            </cac:Country>
+        </cac:DeliveryAddress>
+        <cac:DeliveryParty>
+            <cac:PartyName>
+                <cbc:Name>Almacén Central S.A.</cbc:Name>
+            </cac:PartyName>
+        </cac:DeliveryParty>
+    </cac:Delivery>
+    
+    <!-- Información de pago -->
+    <cac:PaymentMeans>
+        <cbc:PaymentMeansCode listID="UNCL4461">30</cbc:PaymentMeansCode>
+        <cbc:PaymentDueDate>2024-10-29</cbc:PaymentDueDate>
+        <cbc:PaymentChannelCode listID="UNCL4461">31</cbc:PaymentChannelCode>
+        <cac:PayeeFinancialAccount>
+            <cbc:ID>FR1420041010050500013M02606</cbc:ID>
+            <cac:FinancialInstitutionBranch>
+                <cbc:ID>20041</cbc:ID>
+                <cac:FinancialInstitution>
+                    <cbc:ID>20041</cbc:ID>
+                    <cbc:Name>Banco de Francia</cbc:Name>
+                </cac:FinancialInstitution>
+            </cac:FinancialInstitutionBranch>
+        </cac:PayeeFinancialAccount>
+    </cac:PaymentMeans>
+    
+    <!-- Información fiscal -->
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="EUR">210.00</cbc:TaxAmount>
+        <cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="EUR">1000.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="EUR">210.00</cbc:TaxAmount>
+            <cbc:TaxEvidenceIndicator>false</cbc:TaxEvidenceIndicator>
+            <cbc:Percent>21.00</cbc:Percent>
+            <cac:TaxCategory>
+                <cbc:ID schemeID="UNCL5305">S</cbc:ID>
+                <cbc:Percent>21.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                    <cbc:Name>Impuesto sobre el Valor Añadido</cbc:Name>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    
+    <!-- Totales legales -->
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="EUR">1000.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="EUR">1210.00</cbc:TaxInclusiveAmount>
+        <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
+        <cbc:ChargeTotalAmount currencyID="EUR">0.00</cbc:ChargeTotalAmount>
+        <cbc:PrepaidAmount currencyID="EUR">0.00</cbc:PrepaidAmount>
+        <cbc:PayableAmount currencyID="EUR">1210.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+    
+    <!-- Líneas de factura -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">10</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Producto A - Descripción detallada del producto</cbc:Description>
+            <cbc:Name>Producto A</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>PROD-A-001</cbc:ID>
+            </cac:SellersItemIdentification>
+            <cac:CommodityClassification>
+                <cbc:ItemClassificationCode listID="CPV">12345678-9</cbc:ItemClassificationCode>
+            </cac:CommodityClassification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">50.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <cac:InvoiceLine>
+        <cbc:ID>2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">5</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">300.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Producto B - Servicio de consultoría</cbc:Description>
+            <cbc:Name>Producto B</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>PROD-B-002</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">60.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <cac:InvoiceLine>
+        <cbc:ID>3</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">2</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">200.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Producto C - Licencia de software</cbc:Description>
+            <cbc:Name>Producto C</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>PROD-C-003</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+</Invoice>

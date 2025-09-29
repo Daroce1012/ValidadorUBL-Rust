@@ -280,57 +280,6 @@ export class UnifiedDOMManager {
         this.hidePage('visualization');
     }
 
-    // Muestra notificaciones (unificada)
-    showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        const styles = this._getNotificationStyles(type);
-        notification.style.cssText = styles;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        const duration = type === 'error' ? 5000 : 3000;
-        setTimeout(() => notification.remove(), duration);
-    }
-
-    showSuccessMessage(message) {
-        this.showNotification(message, 'success');
-    }
-
-    showErrorMessage(message) {
-        this.showNotification(message, 'error');
-    }
-
-    _getNotificationStyles(type) {
-        const baseStyles = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            z-index: 10000;
-            font-weight: 600;
-            animation: slideInRight 0.3s ease;
-        `;
-
-        const typeStyles = {
-            success: 'background: linear-gradient(135deg, #059669, #047857); box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);',
-            error: 'background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);',
-            info: 'background: linear-gradient(135deg, #3b82f6, #1d4ed8); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);'
-        };
-
-        return baseStyles + typeStyles[type] || typeStyles.info;
-    }
 
 
-    // Obtiene el estado actual de la interfaz
-    getInterfaceState() {
-        return {
-            uploadPageVisible: this.elements.uploadPage.style.display !== 'none',
-            visualizationPageVisible: this.elements.visualizationPage.style.display !== 'none',
-            filePreviewVisible: this.elements.filePreview.style.display !== 'none',
-            errorVisible: this.elements.errorSection.style.display !== 'none',
-            validationResultVisible: this.elements.validationResult.style.display !== 'none'
-        };
-    }
 }

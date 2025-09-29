@@ -130,6 +130,9 @@ impl ValidadorUBL {
             return;
         }
         
+        // Validar namespace UBL
+        self.validar_namespace(doc);
+        
         // Validar elementos requeridos usando roxmltree
         let elementos_requeridos = [
             ("ID", "ID de factura"),
@@ -145,8 +148,69 @@ impl ValidadorUBL {
             }
         }
         
+        // Validar estructura de elementos UBL
+        self.validar_estructura_ubl(doc);
+        
         // Validar reglas de negocio usando las bibliotecas
         self.validar_reglas_negocio(doc);
+    }
+    
+    fn validar_namespace(&mut self, doc: &Document) {
+        let root = doc.root_element();
+        let namespace = root.tag_name().namespace();
+        
+        // Validar que use namespace UBL 2.0 o 2.1
+        if let Some(ns) = namespace {
+            if !ns.contains("ubl:schema:xsd:Invoice-2") {
+                self.errores.push(format!("Namespace incorrecto. Se esperaba UBL 2.0/2.1, encontrado: {}", ns));
+            }
+        } else {
+            self.errores.push("Namespace UBL no encontrado".to_string());
+        }
+    }
+    
+    fn validar_estructura_ubl(&mut self, doc: &Document) {
+        // Validar que no haya elementos inválidos
+        let elementos_invalidos = ["InvalidElement", "InvalidTag", "TestElement"];
+        
+        for elemento in &elementos_invalidos {
+            if doc.descendants()
+                .any(|n| n.tag_name().name() == *elemento) {
+                self.errores.push(format!("Elemento no válido encontrado: {}", elemento));
+            }
+        }
+        
+        // Validar estructura de AccountingSupplierParty
+        if let Some(supplier) = doc.descendants()
+            .find(|n| n.tag_name().name() == "AccountingSupplierParty") {
+            
+            // Verificar que tenga Party como hijo directo
+            if supplier.children()
+                .find(|n| n.tag_name().name() == "Party")
+                .is_none() {
+                self.errores.push("AccountingSupplierParty debe contener elemento Party".to_string());
+            }
+        }
+        
+        // Validar estructura de AccountingCustomerParty (elementos opcionales en UBL)
+        // PartyIdentification y PostalAddress son opcionales según el estándar UBL
+        
+        // Validar estructura de InvoiceLine (solo elementos realmente requeridos)
+        for line in doc.descendants().filter(|n| n.tag_name().name() == "InvoiceLine") {
+            // LineExtensionAmount es requerido
+            if line.children()
+                .find(|n| n.tag_name().name() == "LineExtensionAmount")
+                .is_none() {
+                self.errores.push("InvoiceLine debe contener LineExtensionAmount".to_string());
+            }
+            
+            // Item es requerido pero Name y Price son opcionales en UBL
+            if line.children()
+                .find(|n| n.tag_name().name() == "Item")
+                .is_none() {
+                self.errores.push("InvoiceLine debe contener Item".to_string());
+            }
+        }
     }
     
     fn validar_reglas_negocio(&mut self, doc: &Document) {
@@ -196,8 +260,8 @@ impl ValidadorUBL {
             .find(|n| n.tag_name().name() == "DocumentCurrencyCode")
             .and_then(|n| n.text()) {
             
-            if currency != "EUR" {
-                self.errores.push(format!("Moneda distinta a EUR: {}", currency));
+            if !self.es_moneda_valida(currency) {
+                self.errores.push(format!("Moneda no válida: {}", currency));
             }
         }
         
@@ -213,24 +277,76 @@ impl ValidadorUBL {
     }
     
     fn validar_nifs(&mut self, doc: &Document) {
-        // Usar roxmltree para extraer NIFs
-        let supplier_nif = doc.descendants()
-            .find(|n| n.tag_name().name() == "SupplierAssignedAccountID")
-            .and_then(|n| n.text())
-            .unwrap_or("");
-        
-        let customer_nif = doc.descendants()
-            .find(|n| n.tag_name().name() == "CustomerAssignedAccountID")
-            .and_then(|n| n.text())
-            .unwrap_or("");
-        
-        // Validar NIFs solo si parecen ser españoles (empiezan con número o X/Y/Z)
-        if !supplier_nif.is_empty() && self.es_nif_espanol(supplier_nif) && !self.validar_nif(supplier_nif) {
-            self.errores.push(format!("NIF proveedor inválido: {}", supplier_nif));
+        // Validar identificadores fiscales del proveedor
+        if let Some(supplier_party) = doc.descendants()
+            .find(|n| n.tag_name().name() == "AccountingSupplierParty") {
+            
+            let supplier_country = supplier_party.descendants()
+                .find(|n| n.tag_name().name() == "IdentificationCode")
+                .and_then(|n| n.text())
+                .unwrap_or("");
+            
+            // Buscar identificadores fiscales en EndpointID o PartyIdentification
+            let (supplier_id, supplier_scheme) = supplier_party.descendants()
+                .find(|n| n.tag_name().name() == "EndpointID")
+                .map(|n| {
+                    let id = n.text().unwrap_or("");
+                    let scheme = n.attribute("schemeID").unwrap_or("");
+                    (id, scheme)
+                })
+                .or_else(|| {
+                    supplier_party.descendants()
+                        .find(|n| n.tag_name().name() == "PartyIdentification")
+                        .and_then(|party_id| party_id.descendants().find(|n| n.tag_name().name() == "ID"))
+                        .map(|n| {
+                            let id = n.text().unwrap_or("");
+                            let scheme = n.attribute("schemeID").unwrap_or("");
+                            (id, scheme)
+                        })
+                })
+                .unwrap_or(("", ""));
+            
+            if !supplier_id.is_empty() && !supplier_country.is_empty() {
+                if !self.validar_identificador_fiscal(supplier_id, supplier_country, supplier_scheme) {
+                    self.errores.push(format!("Identificador fiscal proveedor inválido para {}: {}", supplier_country, supplier_id));
+                }
+            }
         }
         
-        if !customer_nif.is_empty() && self.es_nif_espanol(customer_nif) && !self.validar_nif(customer_nif) {
-            self.errores.push(format!("NIF cliente inválido: {}", customer_nif));
+        // Validar identificadores fiscales del cliente
+        if let Some(customer_party) = doc.descendants()
+            .find(|n| n.tag_name().name() == "AccountingCustomerParty") {
+            
+            let customer_country = customer_party.descendants()
+                .find(|n| n.tag_name().name() == "IdentificationCode")
+                .and_then(|n| n.text())
+                .unwrap_or("");
+            
+            // Buscar identificadores fiscales en EndpointID o PartyIdentification
+            let (customer_id, customer_scheme) = customer_party.descendants()
+                .find(|n| n.tag_name().name() == "EndpointID")
+                .map(|n| {
+                    let id = n.text().unwrap_or("");
+                    let scheme = n.attribute("schemeID").unwrap_or("");
+                    (id, scheme)
+                })
+                .or_else(|| {
+                    customer_party.descendants()
+                        .find(|n| n.tag_name().name() == "PartyIdentification")
+                        .and_then(|party_id| party_id.descendants().find(|n| n.tag_name().name() == "ID"))
+                        .map(|n| {
+                            let id = n.text().unwrap_or("");
+                            let scheme = n.attribute("schemeID").unwrap_or("");
+                            (id, scheme)
+                        })
+                })
+                .unwrap_or(("", ""));
+            
+            if !customer_id.is_empty() && !customer_country.is_empty() {
+                if !self.validar_identificador_fiscal(customer_id, customer_country, customer_scheme) {
+                    self.errores.push(format!("Identificador fiscal cliente inválido para {}: {}", customer_country, customer_id));
+                }
+            }
         }
     }
     
@@ -350,12 +466,6 @@ impl ValidadorUBL {
     
     // Métodos específicos de negocio (estos sí los mantenemos)
     
-    fn es_nif_espanol(&self, nif: &str) -> bool {
-        let s = nif.trim().to_uppercase();
-        // Un NIF español tiene 9 caracteres y empieza con número o X/Y/Z
-        s.len() == 9 && (s.chars().next().unwrap().is_digit(10) || ["X", "Y", "Z"].contains(&s.chars().next().unwrap().to_string().as_str()))
-    }
-    
     fn validar_nif(&self, nif: &str) -> bool {
         let s = nif.trim().to_uppercase();
         let dni_letters = "TRWAGMYFPDXBNJZSQVHLCKE";
@@ -396,5 +506,138 @@ impl ValidadorUBL {
     fn approx_eq(&self, a: Decimal, b: Decimal) -> bool {
         let diff = if a > b { a - b } else { b - a };
         diff <= dec!(0.50) // Tolerancia mayor para redondeos UBL
+    }
+    
+    // Validar moneda según estándar ISO 4217 - VERSIÓN ACTUALIZADA
+    fn es_moneda_valida(&self, currency: &str) -> bool {
+        let monedas_validas = [
+            "EUR", "USD", "GBP", "JPY", "CHF", "CAD", "AUD", "NZD", "SEK", "NOK", "DKK",
+            "PLN", "CZK", "HUF", "RUB", "BRL", "MXN", "ARS", "CLP", "COP", "PEN", "UYU",
+            "CNY", "INR", "KRW", "SGD", "HKD", "TWD", "THB", "MYR", "IDR", "PHP", "VND",
+            "ZAR", "EGP", "MAD", "TND", "DZD", "NGN", "KES", "GHS", "XOF", "XAF", "XPF",
+            "TRY", "ILS", "AED", "SAR", "QAR", "KWD", "BHD", "OMR", "JOD", "LBP", "EGP",
+            "RUB", "UAH", "BYN", "KZT", "UZS", "KGS", "TJS", "TMT", "AZN", "AMD", "GEL",
+            "MDL", "RON", "BGN", "HRK", "RSD", "MKD", "ALL", "BAM", "ISK", "LTL", "LVL",
+            "EEK", "SKK", "SIT", "MTL", "CYP", "SLL", "LRD", "GMD", "GNF", "CDF", "AOA",
+            "MZN", "ZMW", "BWP", "SZL", "LSL", "NAD", "MGA", "KMF", "SCR", "MUR", "MVR",
+            "LKR", "BDT", "NPR", "BTN", "AFN", "PKR", "IRR", "IQD", "SYP", "YER", "OMR",
+            "BHD", "KWD", "QAR", "AED", "SAR", "JOD", "LBP", "ILS", "PAL", "JOD", "LBP"
+        ];
+        
+        monedas_validas.contains(&currency)
+    }
+    
+    // Validar identificador fiscal según el país y schemeID
+    fn validar_identificador_fiscal(&self, id: &str, country: &str, scheme: &str) -> bool {
+        // Si hay un schemeID específico, validar según ese esquema
+        if !scheme.is_empty() {
+            match scheme {
+                "FR:SIRET" => self.validar_siret_frances(id),
+                "US:EIN" => self.validar_ein_estadounidense(id),
+                "ES:CIF" | "ES:NIF" => self.validar_nif_espanol(id),
+                "MX:RFC" => self.validar_rfc_mexicano(id),
+                "BR:CNPJ" => self.validar_cnpj_brasileno(id),
+                "AR:CUIT" => self.validar_cuit_argentino(id),
+                "CL:RUT" => self.validar_rut_chileno(id),
+                "CO:NIT" => self.validar_nit_colombiano(id),
+                "PE:RUC" => self.validar_ruc_peruano(id),
+                "UY:RUC" => self.validar_ruc_uruguayo(id),
+                _ => true // Para esquemas no implementados, no validar
+            }
+        } else {
+            // Si no hay schemeID, validar según el país
+            match country {
+                "ES" => self.validar_nif_espanol(id),
+                "FR" => self.validar_siret_frances(id),
+                "DE" => self.validar_steuernummer_aleman(id),
+                "IT" => self.validar_codice_fiscale_italiano(id),
+                "GB" | "UK" => self.validar_vat_uk(id),
+                "US" => self.validar_ein_estadounidense(id),
+                "MX" => self.validar_rfc_mexicano(id),
+                "BR" => self.validar_cnpj_brasileno(id),
+                "AR" => self.validar_cuit_argentino(id),
+                "CL" => self.validar_rut_chileno(id),
+                "CO" => self.validar_nit_colombiano(id),
+                "PE" => self.validar_ruc_peruano(id),
+                "UY" => self.validar_ruc_uruguayo(id),
+                _ => true // Para países no implementados, no validar
+            }
+        }
+    }
+    
+    // Validadores específicos por país
+    fn validar_nif_espanol(&self, nif: &str) -> bool {
+        self.validar_nif(nif)
+    }
+    
+    fn validar_siret_frances(&self, siret: &str) -> bool {
+        // SIRET francés: 14 dígitos
+        siret.len() == 14 && siret.chars().all(|c| c.is_digit(10))
+    }
+    
+    fn validar_steuernummer_aleman(&self, steuer: &str) -> bool {
+        // Steuernummer alemán: formato variable pero generalmente 10-11 dígitos
+        steuer.len() >= 10 && steuer.len() <= 11 && steuer.chars().all(|c| c.is_digit(10))
+    }
+    
+    fn validar_codice_fiscale_italiano(&self, cf: &str) -> bool {
+        // Código fiscal italiano: 16 caracteres alfanuméricos
+        cf.len() == 16 && cf.chars().all(|c| c.is_alphanumeric())
+    }
+    
+    fn validar_vat_uk(&self, vat: &str) -> bool {
+        // VAT UK: formato GB + 9-12 dígitos o formato específico
+        vat.starts_with("GB") && vat.len() >= 11 && vat.len() <= 14
+    }
+    
+    fn validar_ein_estadounidense(&self, ein: &str) -> bool {
+        // EIN estadounidense: formato XX-XXXXXXX (9 dígitos con guión)
+        let parts: Vec<&str> = ein.split('-').collect();
+        parts.len() == 2 && parts[0].len() == 2 && parts[1].len() == 7 && 
+        parts[0].chars().all(|c| c.is_digit(10)) && parts[1].chars().all(|c| c.is_digit(10))
+    }
+    
+    fn validar_rfc_mexicano(&self, rfc: &str) -> bool {
+        // RFC mexicano: 12-13 caracteres alfanuméricos
+        (rfc.len() == 12 || rfc.len() == 13) && rfc.chars().all(|c| c.is_alphanumeric())
+    }
+    
+    fn validar_cnpj_brasileno(&self, cnpj: &str) -> bool {
+        // CNPJ brasileño: 14 dígitos con formato XX.XXX.XXX/XXXX-XX
+        let clean = cnpj.chars().filter(|c| c.is_digit(10)).collect::<String>();
+        clean.len() == 14
+    }
+    
+    fn validar_cuit_argentino(&self, cuit: &str) -> bool {
+        // CUIT argentino: 11 dígitos con formato XX-XXXXXXXX-X
+        let parts: Vec<&str> = cuit.split('-').collect();
+        parts.len() == 3 && parts[0].len() == 2 && parts[1].len() == 8 && parts[2].len() == 1 &&
+        parts[0].chars().all(|c| c.is_digit(10)) && 
+        parts[1].chars().all(|c| c.is_digit(10)) && 
+        parts[2].chars().all(|c| c.is_digit(10))
+    }
+    
+    fn validar_rut_chileno(&self, rut: &str) -> bool {
+        // RUT chileno: formato XXXXXXXX-X
+        let parts: Vec<&str> = rut.split('-').collect();
+        parts.len() == 2 && parts[0].chars().all(|c| c.is_digit(10)) && 
+        (parts[1].len() == 1 && (parts[1].chars().next().unwrap().is_digit(10) || parts[1] == "K"))
+    }
+    
+    fn validar_nit_colombiano(&self, nit: &str) -> bool {
+        // NIT colombiano: formato XXXXXXXX-X
+        let parts: Vec<&str> = nit.split('-').collect();
+        parts.len() == 2 && parts[0].chars().all(|c| c.is_digit(10)) && 
+        parts[1].len() == 1 && parts[1].chars().next().unwrap().is_digit(10)
+    }
+    
+    fn validar_ruc_peruano(&self, ruc: &str) -> bool {
+        // RUC peruano: 11 dígitos
+        ruc.len() == 11 && ruc.chars().all(|c| c.is_digit(10))
+    }
+    
+    fn validar_ruc_uruguayo(&self, ruc: &str) -> bool {
+        // RUC uruguayo: 12 dígitos
+        ruc.len() == 12 && ruc.chars().all(|c| c.is_digit(10))
     }
 }

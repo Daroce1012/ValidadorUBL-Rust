@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ERROR: Namespace incorrecto -->
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-1"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-1"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-1">
+    
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+    <cbc:ID>INV-2024-001</cbc:ID>
+    <cbc:IssueDate>2024-09-29</cbc:IssueDate>
+    <cbc:InvoiceTypeCode listID="UNCL1001">380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode listID="ISO4217">EUR</cbc:DocumentCurrencyCode>
+    
+    <!-- ERROR: Elemento no válido en este contexto -->
+    <cbc:InvalidElement>Valor inválido</cbc:InvalidElement>
+    
+    <!-- ERROR: Atributo no válido -->
+    <cbc:ID invalidAttribute="invalid">INV-2024-001</cbc:ID>
+    
+    <!-- ERROR: Estructura incorrecta - AccountingSupplierParty mal anidado -->
+    <cac:AccountingSupplierParty>
+        <cbc:ID>12345678901234</cbc:ID>
+        <cac:Party>
+            <cbc:EndpointID schemeID="FR:SIRET">12345678901234</cbc:EndpointID>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    
+    <!-- ERROR: Elemento obligatorio faltante en Party -->
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cbc:EndpointID schemeID="ES:CIF">A12345678</cbc:EndpointID>
+            <!-- ERROR: Falta PartyIdentification -->
+            <cac:PartyName>
+                <cbc:Name>Cliente Test</cbc:Name>
+            </cac:PartyName>
+            <!-- ERROR: Falta PostalAddress -->
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    
+    <!-- ERROR: TaxTotal con estructura incorrecta -->
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="EUR">240.00</cbc:TaxAmount>
+        <!-- ERROR: TaxSubtotal mal anidado -->
+        <cbc:TaxableAmount currencyID="EUR">1000.00</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="EUR">240.00</cbc:TaxAmount>
+    </cac:TaxTotal>
+    
+    <!-- ERROR: LegalMonetaryTotal con elementos en orden incorrecto -->
+    <cac:LegalMonetaryTotal>
+        <cbc:PayableAmount currencyID="EUR">1240.00</cbc:PayableAmount>
+        <cbc:LineExtensionAmount currencyID="EUR">1000.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="EUR">1000.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="EUR">1240.00</cbc:TaxInclusiveAmount>
+    </cac:LegalMonetaryTotal>
+    
+    <!-- ERROR: InvoiceLine con elementos faltantes -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">10</cbc:InvoicedQuantity>
+        <!-- ERROR: Falta LineExtensionAmount -->
+        <cac:Item>
+            <cbc:Description>Producto Test</cbc:Description>
+            <!-- ERROR: Falta Name -->
+        </cac:Item>
+        <!-- ERROR: Falta Price -->
+    </cac:InvoiceLine>
+    
+</Invoice>

@@ -235,14 +235,28 @@ export class UBLXMLParser {
             return text ? parseFloat(text) : 0;
         };
 
+        const lineExtensionAmount = getNumberContent('LineExtensionAmount');
+        const payableAmount = getNumberContent('PayableAmount');
         const allowanceTotal = getNumberContent('AllowanceTotalAmount');
         const chargeTotal = getNumberContent('ChargeTotalAmount');
         
+        // Si no hay TaxExclusiveAmount o TaxInclusiveAmount, usar LineExtensionAmount como base
+        let taxExclusiveAmount = getNumberContent('TaxExclusiveAmount');
+        let taxInclusiveAmount = getNumberContent('TaxInclusiveAmount');
+        
+        // Si no se encuentran los campos de impuestos, usar LineExtensionAmount como fallback
+        if (taxExclusiveAmount === 0 && lineExtensionAmount > 0) {
+            taxExclusiveAmount = lineExtensionAmount;
+        }
+        if (taxInclusiveAmount === 0 && payableAmount > 0) {
+            taxInclusiveAmount = payableAmount;
+        }
+        
         return {
-            lineExtensionAmount: getNumberContent('LineExtensionAmount'),
-            taxExclusiveAmount: getNumberContent('TaxExclusiveAmount'),
-            taxInclusiveAmount: getNumberContent('TaxInclusiveAmount'),
-            payableAmount: getNumberContent('PayableAmount'),
+            lineExtensionAmount,
+            taxExclusiveAmount,
+            taxInclusiveAmount,
+            payableAmount,
             ...(allowanceTotal > 0 && { allowanceTotalAmount: allowanceTotal }),
             ...(chargeTotal > 0 && { chargeTotalAmount: chargeTotal })
         };
