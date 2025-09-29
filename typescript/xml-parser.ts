@@ -82,7 +82,10 @@ export class UBLXMLParser {
             // Buscar en cualquier elemento con atributo currencyID
             const currencyElements = invoiceElement.querySelectorAll('[currencyID]');
             if (currencyElements.length > 0) {
-                documentCurrencyCode = currencyElements[0].getAttribute('currencyID') || '';
+                const firstElement = currencyElements[0];
+                if (firstElement) {
+                    documentCurrencyCode = firstElement.getAttribute('currencyID') || '';
+                }
             }
         }
 
