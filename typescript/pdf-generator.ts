@@ -1,8 +1,8 @@
 /**
  * Generador de PDFs para facturas UBL
  */
-import { UBLInvoice, PDFGenerationOptions, ValidationResult } from './types';
-import { InvoiceFormatter } from './invoice-formatter';
+import { UBLInvoice, PDFGenerationOptions, ValidationResult } from './types.js';
+import { InvoiceFormatter } from './invoice-formatter.js';
 
 declare global {
     interface Window {

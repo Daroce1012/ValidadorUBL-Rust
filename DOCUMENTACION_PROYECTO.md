@@ -52,7 +52,13 @@ ValidadorUBL/
 │   └── ...
 │
 ├── 📁 rust/                   # Código Rust/WebAssembly
-│   └── wasm-output/           # WebAssembly compilado
+│   ├── src/                   # Código fuente Rust
+│   │   ├── lib.rs            # Punto de entrada WebAssembly
+│   │   ├── validador.rs      # Lógica de validación UBL
+│   │   └── main.rs           # Ejecutable CLI
+│   ├── wasm-output/           # WebAssembly compilado
+│   ├── esquemas_xsd/          # Esquemas XSD oficiales UBL
+│   └── Cargo.toml            # Dependencias Rust
 │
 └── 📁 ejemplos_ubl/           # Archivos de prueba
 ```
@@ -78,6 +84,9 @@ ValidadorUBL/
 - **Rust** - Validación UBL de alto rendimiento
 - **WebAssembly** - Ejecución en el navegador con rendimiento nativo
 - **XML Parsing** - Procesamiento eficiente de documentos UBL
+- **xmllint** - Validación XSD externa (CLI)
+- **roxmltree** - Parsing XML puro en Rust
+- **rust_decimal** - Cálculos financieros precisos
 
 ### **Librerías Externas:**
 - **jsPDF 3.0.3** - Generación de PDFs profesionales
@@ -505,9 +514,10 @@ class UBLInvoiceVisualizer {
 ### **📊 Métricas del Proyecto:**
 - **Archivos JavaScript:** 6 archivos principales
 - **Archivos TypeScript:** 5 archivos compilados
-- **Líneas de código:** ~2,000 líneas
+- **Archivos Rust:** 3 archivos fuente
+- **Líneas de código:** ~2,500 líneas
 - **Clases principales:** 7 clases
-- **Dependencias:** 1 (TypeScript)
+- **Dependencias:** TypeScript + Rust (roxmltree, rust_decimal)
 
 ### **🎯 Complejidad:**
 - **Baja complejidad** - Arquitectura clara
@@ -527,6 +537,9 @@ class UBLInvoiceVisualizer {
 ### **✅ Validaciones Implementadas:**
 - **Validación de archivos** - Tamaño, formato, tipo
 - **Validación UBL** - Estructura, elementos requeridos
+- **Validación XSD** - Esquemas oficiales UBL (CLI)
+- **Validación de reglas de negocio** - Cálculos financieros, impuestos
+- **Validación de NIFs** - Números de identificación fiscal españoles
 - **Validación de estado** - Verificación de flujo
 - **Validación de UI** - Elementos del DOM
 
@@ -601,6 +614,39 @@ npm run build
 
 ---
 
+## 🔄 **MEJORAS IMPLEMENTADAS EN ESTA SESIÓN**
+
+### **🚀 Migración de libxml2 a xmllint:**
+- **Problema:** Dependencias complejas de libxml2 en Windows
+- **Solución:** Uso de xmllint como herramienta externa
+- **Beneficio:** Instalación más simple y compatible con múltiples sistemas
+
+### **⚡ Optimización de WebAssembly:**
+- **Problema:** Error `RuntimeError: unreachable` en navegador
+- **Solución:** Compilación condicional para WebAssembly
+- **Beneficio:** Funcionamiento estable en navegadores web
+
+### **🎯 Validación UBL mejorada:**
+- **Compatibilidad internacional:** Soporte para InvoiceTypeCode "01", "SalesInvoice"
+- **Cálculos financieros:** Uso de rust_decimal para precisión
+- **Validación de impuestos:** Soporte para tasas 17.5%, 20%, 21%
+- **NIFs españoles:** Validación específica para documentos españoles
+- **Tolerancia de redondeo:** Ajuste para diferencias de redondeo UBL
+
+### **📋 Ejemplos oficiales integrados:**
+- **UBL 2.1:** Ejemplos oficiales de facturas
+- **UBL 2.0:** Compatibilidad con versión anterior
+- **Casos de prueba:** Múltiples escenarios de validación
+- **Documentación:** Índice de ejemplos y casos de uso
+
+### **🔧 Arquitectura robusta:**
+- **Manejo de errores:** Sistema de logging mejorado
+- **Validación no crítica:** XSD como información adicional
+- **Código limpio:** Eliminación de warnings de compilación
+- **Documentación:** Comentarios TODO para futuras mejoras
+
+---
+
 ## 📋 **CONCLUSIONES**
 
 ### **✅ Logros Alcanzados:**
@@ -609,6 +655,9 @@ npm run build
 - **Código mantenible** - Estructura clara y modular
 - **Estándares web** - Cumplimiento de mejores prácticas
 - **Experiencia de usuario** - Interfaz intuitiva y responsiva
+- **Compatibilidad UBL** - Soporte para estándares internacionales
+- **Validación robusta** - Múltiples niveles de verificación
+- **WebAssembly estable** - Funcionamiento sin errores en navegadores
 
 ### **🎯 Objetivos Cumplidos:**
 - ✅ Validación rápida de documentos UBL

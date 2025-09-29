@@ -1,7 +1,7 @@
 /**
  * Formateador de Facturas UBL - Utilidades para formatear datos de facturas
  */
-import { UBLInvoice, UBLParty, UBLLegalMonetaryTotals, TotalLine } from './types';
+import { UBLInvoice, UBLParty, UBLLegalMonetaryTotals, TotalLine } from './types.js';
 
 export class InvoiceFormatter {
     /**

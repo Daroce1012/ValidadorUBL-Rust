@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- ERROR: Múltiples elementos faltantes - solo tiene Invoice -->
-<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2">
-    <!-- Falta cbc:ID -->
-    <!-- Falta cbc:IssueDate -->
-    <!-- Falta cac:AccountingSupplierParty -->
-</Invoice>

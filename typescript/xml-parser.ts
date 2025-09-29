@@ -1,7 +1,7 @@
 /**
  * Parser XML UBL - Convierte documentos XML UBL en objetos TypeScript tipados
  */
-import { UBLInvoice, UBLParty, UBLInvoiceLine, UBLLegalMonetaryTotals, UBLItem, UBLPrice, UBLContact } from './types';
+import { UBLInvoice, UBLParty, UBLInvoiceLine, UBLLegalMonetaryTotals, UBLItem, UBLPrice, UBLContact } from './types.js';
 
 export class UBLXMLParser {
     /**
@@ -23,9 +23,28 @@ export class UBLXMLParser {
         return this.extractInvoiceData(invoiceElement);
     }
 
+    private findElementByLocalName(parent: Element, localName: string): Element | null {
+        // Buscar todos los elementos y encontrar el que tenga el nombre local correcto
+        const elements = parent.querySelectorAll('*');
+        for (const element of elements) {
+            if (element.localName === localName) {
+                return element;
+            }
+        }
+        return null;
+    }
+
     private extractInvoiceData(invoiceElement: Element): UBLInvoice {
         const getTextContent = (selector: string): string => {
-            const element = invoiceElement.querySelector(selector);
+            // Intentar primero con selector exacto
+            let element = invoiceElement.querySelector(selector);
+            
+            // Si no se encuentra, buscar por nombre local (ignorando namespace)
+            if (!element) {
+                const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
+                element = this.findElementByLocalName(invoiceElement, localName);
+            }
+            
             return element ? element.textContent?.trim() || '' : '';
         };
 
@@ -34,25 +53,55 @@ export class UBLXMLParser {
             return text ? parseFloat(text) : 0;
         };
 
+        const getElement = (selector: string): Element | null => {
+            // Intentar primero con selector exacto
+            let element = invoiceElement.querySelector(selector);
+            
+            // Si no se encuentra, buscar por nombre local (ignorando namespace)
+            if (!element) {
+                const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
+                element = this.findElementByLocalName(invoiceElement, localName);
+            }
+            
+            return element;
+        };
+
         const dueDate = getTextContent('DueDate');
         const buyerReference = getTextContent('BuyerReference');
         
+        // Buscar moneda en diferentes lugares
+        let documentCurrencyCode = getTextContent('DocumentCurrencyCode');
+        if (!documentCurrencyCode) {
+            // Buscar en LineExtensionAmount
+            const lineExtensionElement = getElement('LineExtensionAmount');
+            if (lineExtensionElement) {
+                documentCurrencyCode = lineExtensionElement.getAttribute('currencyID') || '';
+            }
+        }
+        if (!documentCurrencyCode) {
+            // Buscar en cualquier elemento con atributo currencyID
+            const currencyElements = invoiceElement.querySelectorAll('[currencyID]');
+            if (currencyElements.length > 0) {
+                documentCurrencyCode = currencyElements[0].getAttribute('currencyID') || '';
+            }
+        }
+
         return {
             id: getTextContent('ID'),
             issueDate: getTextContent('IssueDate'),
             ...(dueDate && { dueDate }),
             invoiceTypeCode: getTextContent('InvoiceTypeCode'),
-            documentCurrencyCode: getTextContent('DocumentCurrencyCode'),
+            documentCurrencyCode: documentCurrencyCode || 'EUR', // Fallback a EUR
             ...(buyerReference && { buyerReference }),
-            accountingSupplierParty: this.extractParty(invoiceElement, 'AccountingSupplierParty'),
-            accountingCustomerParty: this.extractParty(invoiceElement, 'AccountingCustomerParty'),
+            accountingSupplierParty: this.extractParty(invoiceElement, 'AccountingSupplierParty', getElement),
+            accountingCustomerParty: this.extractParty(invoiceElement, 'AccountingCustomerParty', getElement),
             invoiceLines: this.extractInvoiceLines(invoiceElement),
             legalMonetaryTotals: this.extractMonetaryTotals(invoiceElement)
         };
     }
 
-    private extractParty(invoiceElement: Element, partySelector: string): UBLParty {
-        const partyElement = invoiceElement.querySelector(partySelector);
+    private extractParty(invoiceElement: Element, partySelector: string, getElement: (selector: string) => Element | null): UBLParty {
+        const partyElement = getElement(partySelector);
         if (!partyElement) {
             return {
                 partyName: 'No disponible',
@@ -61,7 +110,15 @@ export class UBLXMLParser {
         }
 
         const getTextContent = (selector: string): string => {
-            const element = partyElement.querySelector(selector);
+            // Intentar primero con selector exacto
+            let element = partyElement.querySelector(selector);
+            
+            // Si no se encuentra, buscar por nombre local (ignorando namespace)
+            if (!element) {
+                const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
+                element = this.findElementByLocalName(partyElement, localName);
+            }
+            
             return element ? element.textContent?.trim() || '' : '';
         };
 
@@ -99,12 +156,34 @@ export class UBLXMLParser {
     }
 
     private extractInvoiceLines(invoiceElement: Element): UBLInvoiceLine[] {
-        const lineElements = invoiceElement.querySelectorAll('InvoiceLine');
+        // Buscar líneas de factura con diferentes namespaces
+        let lineElements = invoiceElement.querySelectorAll('InvoiceLine');
+        if (lineElements.length === 0) {
+            // Si no encuentra con selector directo, buscar por nombre local
+            const allElements = invoiceElement.querySelectorAll('*');
+            const invoiceLineElements: Element[] = [];
+            for (const element of allElements) {
+                if (element.localName === 'InvoiceLine') {
+                    invoiceLineElements.push(element);
+                }
+            }
+            // Usar array directamente en lugar de NodeList
+            lineElements = invoiceLineElements as any;
+        }
+        
         const lines: UBLInvoiceLine[] = [];
 
         lineElements.forEach(lineElement => {
             const getTextContent = (selector: string): string => {
-                const element = lineElement.querySelector(selector);
+                // Intentar primero con selector exacto
+                let element = lineElement.querySelector(selector);
+                
+                // Si no se encuentra, buscar por nombre local (ignorando namespace)
+                if (!element) {
+                    const localName = selector.replace(/^[^:]*:/, ''); // Remover namespace
+                    element = this.findElementByLocalName(lineElement, localName);
+                }
+                
                 return element ? element.textContent?.trim() || '' : '';
             };
 
@@ -113,7 +192,10 @@ export class UBLXMLParser {
                 return text ? parseFloat(text) : 0;
             };
 
-            const itemElement = lineElement.querySelector('Item');
+            let itemElement = lineElement.querySelector('Item');
+            if (!itemElement) {
+                itemElement = this.findElementByLocalName(lineElement, 'Item');
+            }
             const itemName = getTextContent('Name');
             const sellersItemId = getTextContent('SellersItemIdentification');
             

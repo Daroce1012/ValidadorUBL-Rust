@@ -57,9 +57,10 @@ fn main() -> Result<()> {
             if cli.verbose {
                 println!(" Detalles del error: {}", e);
                 
-                // Mostrar elementos faltantes si el validador tiene estado
-                if !validador.elementos_faltantes().is_empty() {
-                    println!(" Elementos faltantes: {}", validador.elementos_faltantes().join(", "));
+                // Mostrar errores detallados si están disponibles
+                let errores = validador.obtener_errores();
+                if !errores.is_empty() {
+                    println!(" Errores detallados: {}", errores.join("; "));
                 }
             }
             std::process::exit(1);

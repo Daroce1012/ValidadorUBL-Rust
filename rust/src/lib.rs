@@ -1,4 +1,5 @@
 //! Biblioteca WebAssembly para validar documentos UBL
+//! Estructura simplificada y unificada
 
 use wasm_bindgen::prelude::*;
 use validador::ValidadorUBL;
@@ -15,19 +16,19 @@ mod validador;
 /// * `Err(String)` - Mensaje de error si el documento es inválido
 #[wasm_bindgen]
 pub fn validar_ubl(xml_content: &str) -> Result<String, String> {
-    // Crear un validador
     let mut validador = ValidadorUBL::new();
     
-    // Validar contenido
     match validador.validar_contenido(xml_content) {
         Ok(_) => Ok("Válido".to_string()),
         Err(e) => {
-            let elementos_faltantes = validador.elementos_faltantes();
-            if elementos_faltantes.is_empty() {
-                Err(format!("Error: {}", e))
-            } else {
-                Err(format!("Faltan elementos: {}", elementos_faltantes.join(", ")))
+            let errores = validador.obtener_errores();
+            let mut mensaje = format!("Error: {}", e);
+            
+            if !errores.is_empty() {
+                mensaje.push_str(&format!("\nErrores detallados: {}", errores.join("; ")));
             }
+            
+            Err(mensaje)
         }
     }
 }
@@ -35,11 +36,11 @@ pub fn validar_ubl(xml_content: &str) -> Result<String, String> {
 /// Obtiene la versión del validador
 #[wasm_bindgen]
 pub fn version() -> String {
-    "1.0.0".to_string()
+    "2.0.0".to_string()
 }
 
 /// Obtiene información sobre los elementos UBL requeridos
 #[wasm_bindgen]
 pub fn elementos_requeridos() -> String {
-    "Invoice, cbc:ID, cbc:IssueDate, cac:AccountingSupplierParty".to_string()
+    "Invoice, cbc:ID, cbc:IssueDate, cac:AccountingSupplierParty, NIFs válidos, Impuestos válidos, Totales válidos".to_string()
 }

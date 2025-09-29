@@ -1,10 +1,10 @@
 /**
  * Visualizador Principal de Facturas UBL
  */
-import { UBLInvoice, VisualizationOptions, ValidationResult, PDFGenerationOptions } from './types';
-import { UBLXMLParser } from './xml-parser';
-import { PDFGenerator } from './pdf-generator';
-import { InvoiceFormatter } from './invoice-formatter';
+import { UBLInvoice, VisualizationOptions, ValidationResult, PDFGenerationOptions } from './types.js';
+import { UBLXMLParser } from './xml-parser.js';
+import { PDFGenerator } from './pdf-generator.js';
+import { InvoiceFormatter } from './invoice-formatter.js';
 
 export class UBLInvoiceVisualizer {
     private parser: UBLXMLParser;

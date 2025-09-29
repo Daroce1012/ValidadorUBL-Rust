@@ -20,7 +20,7 @@ Este documento contiene **DOS SECCIONES**:
 
 > **⚠️ NOTA**: Esta sección es solo para compilar el código Rust a WebAssembly. Si ya tienes los archivos `.wasm` en la carpeta `rust/wasm-output/pkg/`, puedes saltar directamente a la **PARTE 2**.
 
-## 📋 **PASO 1: INSTALAR RUST**
+## 📋 **PASO 1: INSTALAR RUST Y XMLLINT**
 
 ### 1.1 Descargar Rust
 - Ve a: https://rustup.rs/
@@ -32,12 +32,39 @@ Este documento contiene **DOS SECCIONES**:
 - Acepta la instalación por defecto
 - **IMPORTANTE**: Reinicia la terminal/PowerShell después de la instalación
 
-### 1.3 Verificar instalación
+### 1.3 Verificar instalación de Rust
 ```bash
 rustc --version
 cargo --version
 ```
 **Resultado esperado**: Debe mostrar las versiones de Rust y Cargo
+
+### 1.4 Instalar xmllint (Windows)
+**Opción A - Usando Chocolatey (RECOMENDADO):**
+```bash
+# Instalar Chocolatey si no lo tienes (ejecutar como Administrador)
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# Instalar libxml2 (incluye xmllint)
+choco install libxml2
+```
+
+**Opción B - Usando MSYS2:**
+```bash
+# Descargar MSYS2 desde: https://www.msys2.org/
+# Instalar y luego ejecutar en terminal MSYS2:
+pacman -S mingw-w64-x86_64-libxml2
+```
+
+**Opción C - Binarios precompilados:**
+- Descargar desde: https://www.zlatkovic.com/projects/libxml/
+- Extraer y agregar al PATH
+
+### 1.5 Verificar instalación de xmllint
+```bash
+xmllint --version
+```
+**Resultado esperado**: Debe mostrar la versión de xmllint
 
 ---
 
@@ -192,6 +219,19 @@ cargo run --bin validador-ubl --features cli -- --help
 - **Solución**: Falta especificar la feature CLI
 - **Acción**: Agregar `--features cli` a los comandos de cargo run
 
+### Error: "Error ejecutando xmllint. ¿Está instalado xmllint?"
+- **Solución**: xmllint no está instalado o no está en el PATH
+- **Acción**: Instalar xmllint usando una de las opciones del PASO 1.4
+- **Verificación**: Ejecutar `xmllint --version` para confirmar instalación
+
+### Error: "xmllint no se reconoce como comando"
+- **Solución**: xmllint no está en el PATH del sistema
+- **Acción**: 
+  1. Encontrar la ubicación de xmllint (normalmente en `C:\ProgramData\chocolatey\lib\libxml2\tools\bin\`)
+  2. Agregar la ruta al PATH del sistema
+  3. Reiniciar la terminal
+- **Alternativa**: Usar la ruta completa en el código si es necesario
+
 ---
 
 ## 📝 **NOTAS IMPORTANTES**
@@ -201,6 +241,8 @@ cargo run --bin validador-ubl --features cli -- --help
 3. **Verificar que todos los archivos de ejemplo existan** antes de probar
 4. **El WebAssembly se regenera cada vez** que se ejecuta `wasm-pack build`
 5. **Los archivos en `pkg/` reemplazan automáticamente** los existentes
+6. **xmllint es necesario** para validación XSD - instalar antes de compilar
+7. **xmllint debe estar en el PATH** del sistema para funcionar correctamente
 
 ---
 

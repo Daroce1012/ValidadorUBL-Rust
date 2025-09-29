@@ -18,6 +18,13 @@ anyhow = "1.0"
 wasm-bindgen = "0.2"
 # Para manejo de argumentos de línea de comandos (solo para binario)
 clap = { version = "4.4", features = ["derive"], optional = true }
+# Para validación XSD (usando xmllint)
+roxmltree = "0.19"
+# Para manejo de decimales precisos
+rust_decimal = "1.34"
+rust_decimal_macros = "1.34"
+# Para manejo de fechas
+chrono = "0.4"
 
 [[bin]]
 name = "validador-ubl"
