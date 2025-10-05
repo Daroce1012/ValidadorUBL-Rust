@@ -1,19 +1,10 @@
 //! Biblioteca WebAssembly para validar documentos UBL
-//! Estructura simplificada y unificada
-
 use wasm_bindgen::prelude::*;
 use validador::ValidadorUBL;
 
 mod validador;
 
-/// Valida un documento UBL desde JavaScript
-/// 
-/// # Argumentos
-/// * `xml_content` - Contenido XML del documento UBL como string
-/// 
-/// # Retorna
-/// * `Ok(String)` - "Válido" si el documento es válido
-/// * `Err(String)` - Mensaje de error si el documento es inválido
+
 #[wasm_bindgen]
 pub fn validar_ubl(xml_content: &str) -> Result<String, String> {
     let mut validador = ValidadorUBL::new();

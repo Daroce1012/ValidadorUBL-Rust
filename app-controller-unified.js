@@ -160,27 +160,50 @@ export class AppController {
 
         try {
             await this.delay(300); // Simular tiempo de procesamiento
+            
+            // La función validar_ubl devuelve un Result<String, String>
+            // En JavaScript, cuando es Ok devuelve el string, cuando es Err lanza una excepción
+            console.log('🔍 Validando contenido XML:', this.state.xmlContent.substring(0, 200) + '...');
+            console.log('🔍 Validador disponible:', this.validator);
+            console.log('🔍 Función validate:', this.validator.validate);
+            
             const resultado = this.validator.validate(this.state.xmlContent);
+            console.log('🔍 Resultado de validación:', resultado);
+            console.log('🔍 Tipo de resultado:', typeof resultado);
             
-            if (resultado === 'Válido') {
-                this.state.validationResult = {
-                    isValid: true,
-                    message: '✅ Documento válido: Cumple con todos los requisitos UBL'
-                };
-                this.showResult(this.state.validationResult.message, 'success');
-            } else {
-                this.state.validationResult = {
-                    isValid: false,
-                    message: `❌ Documento inválido: ${resultado}`,
-                    errors: [resultado]
-                };
-                this.showResult(this.state.validationResult.message, 'error');
-            }
-            
+            // Si llegamos aquí, significa que la validación fue exitosa (Ok)
+            this.state.validationResult = {
+                isValid: true,
+                message: '✅ Documento válido: Cumple con todos los requisitos UBL'
+            };
+            this.showResult(this.state.validationResult.message, 'success');
             this.updateVisualizationButtonState();
+            
         } catch (error) {
             console.error('Error durante validación:', error);
-            this.showResult(`Error durante la validación: ${error.message}`, 'error');
+            console.error('Error type:', typeof error);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+            
+            // Si hay una excepción, significa que la validación falló (Err)
+            // El mensaje de error viene en error.message
+            let errorMessage = 'Error desconocido durante la validación';
+            
+            if (error && error.message) {
+                errorMessage = error.message;
+            } else if (error && typeof error === 'string') {
+                errorMessage = error;
+            } else if (error && error.toString) {
+                errorMessage = error.toString();
+            }
+            
+            this.state.validationResult = {
+                isValid: false,
+                message: `❌ Documento inválido: ${errorMessage}`,
+                errors: [errorMessage]
+            };
+            this.showResult(this.state.validationResult.message, 'error');
+            this.updateVisualizationButtonState();
         }
 
         this.state.isProcessing = false;
