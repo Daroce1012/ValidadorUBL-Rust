@@ -3,7 +3,7 @@
  * Integra validador UBL y visualizador de facturas
  */
 
-import { AppController } from './app-controller-unified.js';
+import { AppController } from './app-controller.js';
 
 // Inicializar la aplicación
 async function initializeApp() {
