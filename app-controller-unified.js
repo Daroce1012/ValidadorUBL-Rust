@@ -2,6 +2,8 @@
  * Controlador Principal Unificado
  * Integra todas las funcionalidades de la aplicación UBL
  */
+import { Timer } from './timer.js';
+
 export class AppController {
     constructor() {
         this.elements = {};
@@ -66,6 +68,12 @@ export class AppController {
         // Área de carga de archivos
         if (this.elements.uploadArea) {
             this.elements.uploadArea.addEventListener('click', (e) => {
+                // Solo permitir si no hay archivo cargado
+                if (this.state.xmlContent) {
+                    e.preventDefault();
+                    this.showResult('Ya hay un archivo cargado. Usa el botón "🔄 Cambiar Archivo" para cargar otro.', 'warning');
+                    return;
+                }
                 if (e.target !== this.elements.validateBtn && e.target !== this.elements.fileInput) {
                     this.elements.fileInput?.click();
                 }
@@ -74,6 +82,11 @@ export class AppController {
             // Drag and drop
             this.elements.uploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
+                // Solo permitir drag si no hay archivo cargado
+                if (this.state.xmlContent) {
+                    e.dataTransfer.dropEffect = 'none';
+                    return;
+                }
                 this.elements.uploadArea.classList.add('dragover');
             });
 
@@ -85,6 +98,13 @@ export class AppController {
             this.elements.uploadArea.addEventListener('drop', (e) => {
                 e.preventDefault();
                 this.elements.uploadArea.classList.remove('dragover');
+                
+                // Solo permitir drop si no hay archivo cargado
+                if (this.state.xmlContent) {
+                    this.showResult('Ya hay un archivo cargado. Usa el botón "🔄 Cambiar Archivo" para cargar otro.', 'warning');
+                    return;
+                }
+                
                 const files = e.dataTransfer.files;
                 if (files.length > 0) this.handleFileSelect(files[0]);
             });
@@ -134,16 +154,28 @@ export class AppController {
             return;
         }
 
+        // 🕐 MEDIR TIEMPO DE CARGA DE ARCHIVO (JavaScript puro)
+        const timerCarga = new Timer('Carga de archivo XML (JavaScript)');
+        timerCarga.start();
+
         const reader = new FileReader();
         reader.onload = (e) => {
+            const timingCarga = timerCarga.end();
+            
             this.state.xmlContent = e.target.result;
             this.state.currentFile = file;
             this.showFileInfo(file.name, this.formatFileSize(file.size));
-            this.showResult('Archivo cargado. Selecciona una acción.', 'success');
+            this.showResult(`Archivo cargado en ${timingCarga.tiempoSegundos}s. Selecciona una acción.`, 'success');
             this.showFilePreview();
             this.updateVisualizationButtonState();
+            
+            // Deshabilitar visualmente el área de carga
+            this.disableUploadArea();
         };
-        reader.onerror = () => this.showResult('Error al leer el archivo.', 'error');
+        reader.onerror = () => {
+            timerCarga.endWithError(new Error('Error al leer el archivo'));
+            this.showResult('Error al leer el archivo.', 'error');
+        };
         reader.readAsText(file, 'UTF-8');
     }
 
@@ -158,16 +190,22 @@ export class AppController {
         this.setButtonState(true, 'Validando documento...');
         this.showResult('Validando documento...', 'loading');
 
+        // Delay de simulación (NO se mide)
+        await this.delay(300);
+        
+        console.log('🔍 Validando contenido XML:', this.state.xmlContent.substring(0, 200) + '...');
+        console.log('🔍 Validador disponible:', this.validator);
+        console.log('🔍 Función validate:', this.validator.validate);
+        
+        // 🕐 MEDIR SOLO EL TIEMPO DE WEBASSEMBLY (SIN DELAY)
+        const timerWebAssembly = new Timer('Validación WebAssembly UBL');
+        timerWebAssembly.start();
+        
         try {
-            await this.delay(300); // Simular tiempo de procesamiento
-            
-            // La función validar_ubl devuelve un Result<String, String>
-            // En JavaScript, cuando es Ok devuelve el string, cuando es Err lanza una excepción
-            console.log('🔍 Validando contenido XML:', this.state.xmlContent.substring(0, 200) + '...');
-            console.log('🔍 Validador disponible:', this.validator);
-            console.log('🔍 Función validate:', this.validator.validate);
-            
             const resultado = this.validator.validate(this.state.xmlContent);
+            
+            const timingWebAssembly = timerWebAssembly.end();
+            
             console.log('🔍 Resultado de validación:', resultado);
             console.log('🔍 Tipo de resultado:', typeof resultado);
             
@@ -176,10 +214,15 @@ export class AppController {
                 isValid: true,
                 message: '✅ Documento válido: Cumple con todos los requisitos UBL'
             };
-            this.showResult(this.state.validationResult.message, 'success');
+            
+            // Mostrar tiempo REAL de WebAssembly (sin delay)
+            this.showResult(`${this.state.validationResult.message} (WebAssembly: ${timingWebAssembly.tiempoSegundos}s)`, 'success');
             this.updateVisualizationButtonState();
             
         } catch (error) {
+            // Terminar el timer incluso en caso de error
+            const timingWebAssembly = timerWebAssembly.endWithError(error);
+            
             console.error('Error durante validación:', error);
             console.error('Error type:', typeof error);
             console.error('Error message:', error.message);
@@ -202,7 +245,9 @@ export class AppController {
                 message: `❌ Documento inválido: ${errorMessage}`,
                 errors: [errorMessage]
             };
-            this.showResult(this.state.validationResult.message, 'error');
+            
+            // Mostrar tiempo INCLUSO cuando hay error
+            this.showResult(`${this.state.validationResult.message} (WebAssembly: ${timingWebAssembly.tiempoSegundos}s)`, 'error');
             this.updateVisualizationButtonState();
         }
 
@@ -231,7 +276,17 @@ export class AppController {
         this.setButtonState(true, 'Procesando visualización...');
 
         try {
+            // 🕐 MEDIR TIEMPO DEL VISUALIZADOR
+            const timerVisualizador = new Timer('Visualización de documento UBL');
+            timerVisualizador.start();
+            
             await this.visualizer.processXMLFile(this.state.xmlContent, this.state.validationResult);
+            
+            const timingVisualizador = timerVisualizador.end();
+            
+            // Mostrar tiempo del visualizador
+            this.showResult(`✅ Visualización completada en ${timingVisualizador.tiempoSegundos} segundos`, 'success');
+            
             this.goToVisualizationPage();
         } catch (error) {
             console.error('Error durante visualización:', error);
@@ -304,6 +359,27 @@ export class AppController {
         this.showPage('upload');
         this.hidePage('visualization');
         this.updateVisualizationButtonState();
+        
+        // Rehabilitar el área de carga
+        this.enableUploadArea();
+    }
+
+    // Deshabilita visualmente el área de carga
+    disableUploadArea() {
+        if (this.elements.uploadArea) {
+            this.elements.uploadArea.style.opacity = '0.6';
+            this.elements.uploadArea.style.cursor = 'not-allowed';
+            this.elements.uploadArea.style.pointerEvents = 'auto'; // Mantener eventos para mostrar mensaje
+        }
+    }
+
+    // Habilita el área de carga
+    enableUploadArea() {
+        if (this.elements.uploadArea) {
+            this.elements.uploadArea.style.opacity = '1';
+            this.elements.uploadArea.style.cursor = 'pointer';
+            this.elements.uploadArea.style.pointerEvents = 'auto';
+        }
     }
 
     // Actualiza el estado del botón de visualización

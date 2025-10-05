@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>urn:oasis:names:specification:ubl:xpath:Invoice-2.1</cbc:CustomizationID>
+    <cbc:ProfileID>urn:oasis:names:specification:ubl:invoice:2.1</cbc:ProfileID>
+    <cbc:ID>CONST-INV-2025-555</cbc:ID>
+    <cbc:IssueDate>2025-10-05</cbc:IssueDate>
+    <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+    <cbc:BuyerReference>OBRA-2025-RESIDENCIAL-789</cbc:BuyerReference>
+    
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cac:PartyName>
+                <cbc:Name>Materiales de Construcción ProBuild S.A.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Polígono Industrial Norte</cbc:StreetName>
+                <cbc:CityName>Sevilla</cbc:CityName>
+                <cbc:PostalZone>41000</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>ES</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ESB44556677</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:Contact>
+                <cbc:Name>Pedro Sánchez</cbc:Name>
+                <cbc:Telephone>+34 95 444 3322</cbc:Telephone>
+                <cbc:ElectronicMail>ventas@probuild.es</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cac:PartyName>
+                <cbc:Name>Constructora Edificios Modernos S.L.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Avenida de la Construcción</cbc:StreetName>
+                <cbc:CityName>Málaga</cbc:CityName>
+                <cbc:PostalZone>29000</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>ES</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ESA22334455</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:Contact>
+                <cbc:Name>Laura Fernández</cbc:Name>
+                <cbc:Telephone>+34 95 222 1100</cbc:Telephone>
+                <cbc:ElectronicMail>compras@edificiosmodernos.es</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    
+    <!-- LÍNEA 1: Cemento -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="TNE">50</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">5000.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Cemento Portland tipo CEM II/A-L 42,5 R, ensacado 25kg, resistencia alta</cbc:Description>
+            <cbc:Name>Cemento Portland CEM II 42,5 R</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>CEM-PORT-425R-25KG</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="TNE">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 2: Ladrillos -->
+    <cac:InvoiceLine>
+        <cbc:ID>2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">20000</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">6000.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Ladrillo hueco doble 24x11,5x7 cm, cerámica roja, alta resistencia térmica</cbc:Description>
+            <cbc:Name>Ladrillo Hueco Doble 24</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>LADR-HD-24-CER</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">0.30</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 3: Arena -->
+    <cac:InvoiceLine>
+        <cbc:ID>3</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="TNE">100</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">2500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Arena de río lavada, granulometría 0-5mm, ideal para mortero y hormigón</cbc:Description>
+            <cbc:Name>Arena de Río Lavada 0-5mm</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>ARENA-RIO-05MM</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">25.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="TNE">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 4: Grava -->
+    <cac:InvoiceLine>
+        <cbc:ID>4</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="TNE">80</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">2400.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Grava machacada caliza, granulometría 10-20mm, para hormigón estructural</cbc:Description>
+            <cbc:Name>Grava Caliza 10-20mm</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>GRAVA-CAL-1020MM</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">30.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="TNE">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 5: Hierro corrugado -->
+    <cac:InvoiceLine>
+        <cbc:ID>5</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="TNE">15</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">12000.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Acero corrugado B500S, diámetro 12mm, barras 12m, certificado soldable</cbc:Description>
+            <cbc:Name>Hierro Corrugado B500S Ø12mm</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>HIER-B500S-12MM</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">800.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="TNE">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 6: Bloques de hormigón -->
+    <cac:InvoiceLine>
+        <cbc:ID>6</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">5000</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">7500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Bloque de hormigón 40x20x20 cm, acabado liso, resistencia 5 N/mm²</cbc:Description>
+            <cbc:Name>Bloque Hormigón 40x20x20</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>BLOQ-HORM-402020</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">1.50</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 7: Vigas de acero -->
+    <cac:InvoiceLine>
+        <cbc:ID>7</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="TNE">8</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">9600.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Viga IPN 200 de acero laminado S275JR, longitud 12m, certificado CE</cbc:Description>
+            <cbc:Name>Viga IPN 200 S275JR</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>VIGA-IPN200-S275</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">1200.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="TNE">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 8: Aislante térmico -->
+    <cac:InvoiceLine>
+        <cbc:ID>8</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTK">1000</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">15000.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Panel de poliestireno extruido XPS, espesor 50mm, λ=0.035 W/mK, antihumedad</cbc:Description>
+            <cbc:Name>Aislante XPS 50mm</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>AISL-XPS-50MM</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">15.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="MTK">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 9: Placas de yeso -->
+    <cac:InvoiceLine>
+        <cbc:ID>9</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">800</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">4800.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Placa de yeso laminado BA 13mm, 120x260 cm, borde afinado, hidrófuga</cbc:Description>
+            <cbc:Name>Placa Yeso BA13 Hidrófuga</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>PLACA-YESO-BA13-H</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">6.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 10: Pintura -->
+    <cac:InvoiceLine>
+        <cbc:ID>10</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="LTR">500</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">7500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Pintura plástica lavable mate, interior, alta cubrición, blanco, sin olor</cbc:Description>
+            <cbc:Name>Pintura Plástica Mate Interior</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>PINT-PLAST-MAT-BL</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">15.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="LTR">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 11: Tubería PVC -->
+    <cac:InvoiceLine>
+        <cbc:ID>11</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTR">2000</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">4000.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Tubería PVC serie B, diámetro 110mm, junta pegada, para evacuación</cbc:Description>
+            <cbc:Name>Tubería PVC Ø110mm Serie B</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>TUB-PVC-110-SB</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">2.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 12: Cable eléctrico -->
+    <cac:InvoiceLine>
+        <cbc:ID>12</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTR">3000</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">9000.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Cable eléctrico RZ1-K 3x2.5mm², libre halógenos, 0.6/1kV, rollo 100m</cbc:Description>
+            <cbc:Name>Cable RZ1-K 3x2.5mm²</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>CABLE-RZ1K-325</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">3.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="EUR">17913.00</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="EUR">85300.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="EUR">17913.00</cbc:TaxAmount>
+            <cac:TaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>21</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="EUR">85300.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="EUR">85300.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="EUR">103213.00</cbc:TaxInclusiveAmount>
+        <cbc:PayableAmount currencyID="EUR">103213.00</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+</Invoice>
+

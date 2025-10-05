@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+    <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+    <cbc:CustomizationID>urn:oasis:names:specification:ubl:xpath:Invoice-2.1</cbc:CustomizationID>
+    <cbc:ProfileID>urn:oasis:names:specification:ubl:invoice:2.1</cbc:ProfileID>
+    <cbc:ID>ELEC-INV-2025-001</cbc:ID>
+    <cbc:IssueDate>2025-10-05</cbc:IssueDate>
+    <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+    <cbc:BuyerReference>PO-2025-TECH-456</cbc:BuyerReference>
+    
+    <cac:AccountingSupplierParty>
+        <cac:Party>
+            <cac:PartyName>
+                <cbc:Name>TechStore Electronics S.L.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Avenida Tecnológica</cbc:StreetName>
+                <cbc:CityName>Madrid</cbc:CityName>
+                <cbc:PostalZone>28001</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>ES</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ESB12345678</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:Contact>
+                <cbc:Name>Carlos García</cbc:Name>
+                <cbc:Telephone>+34 91 123 4567</cbc:Telephone>
+                <cbc:ElectronicMail>ventas@techstore.es</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingSupplierParty>
+    
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cac:PartyName>
+                <cbc:Name>Empresa Innovadora Tech S.A.</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Calle Innovación</cbc:StreetName>
+                <cbc:CityName>Barcelona</cbc:CityName>
+                <cbc:PostalZone>08001</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>ES</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cbc:CompanyID>ESA87654321</cbc:CompanyID>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:Contact>
+                <cbc:Name>María López</cbc:Name>
+                <cbc:Telephone>+34 93 987 6543</cbc:Telephone>
+                <cbc:ElectronicMail>compras@innovadora.es</cbc:ElectronicMail>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    
+    <!-- LÍNEA 1: Portátil -->
+    <cac:InvoiceLine>
+        <cbc:ID>1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">5</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">4500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Portátil profesional de alta gama con procesador Intel i7, 16GB RAM, SSD 512GB</cbc:Description>
+            <cbc:Name>Laptop ProBook 450 G9</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>LAPTOP-HP-450-G9</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">900.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 2: Monitor -->
+    <cac:InvoiceLine>
+        <cbc:ID>2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">10</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">2500.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Monitor LED 27 pulgadas, resolución 4K UHD, panel IPS</cbc:Description>
+            <cbc:Name>Monitor Dell UltraSharp U2723DE</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>MON-DELL-U2723</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">250.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 3: Teclado -->
+    <cac:InvoiceLine>
+        <cbc:ID>3</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">15</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">1125.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Teclado mecánico ergonómico, switches Cherry MX, retroiluminación RGB</cbc:Description>
+            <cbc:Name>Teclado Logitech MX Mechanical</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>KB-LOG-MX-MECH</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">75.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 4: Ratón -->
+    <cac:InvoiceLine>
+        <cbc:ID>4</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">15</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">600.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Ratón inalámbrico ergonómico, sensor óptico 4000 DPI, batería recargable</cbc:Description>
+            <cbc:Name>Ratón Logitech MX Master 3S</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>MOUSE-LOG-MX3S</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">40.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 5: Webcam -->
+    <cac:InvoiceLine>
+        <cbc:ID>5</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">8</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">800.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Cámara web HD 1080p, enfoque automático, micrófono integrado con cancelación de ruido</cbc:Description>
+            <cbc:Name>Webcam Logitech Brio 4K</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>CAM-LOG-BRIO4K</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">100.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 6: Auriculares -->
+    <cac:InvoiceLine>
+        <cbc:ID>6</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">12</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">1800.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Auriculares inalámbricos con cancelación activa de ruido, bluetooth 5.0, autonomía 30h</cbc:Description>
+            <cbc:Name>Auriculares Sony WH-1000XM5</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>HEAD-SONY-XM5</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">150.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <!-- LÍNEA 7: Hub USB -->
+    <cac:InvoiceLine>
+        <cbc:ID>7</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="EA">20</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">600.00</cbc:LineExtensionAmount>
+        <cac:Item>
+            <cbc:Description>Hub USB-C con 7 puertos USB 3.0, alimentación externa, compatible Thunderbolt</cbc:Description>
+            <cbc:Name>Hub Anker PowerExpand 7-en-1</cbc:Name>
+            <cac:SellersItemIdentification>
+                <cbc:ID>HUB-ANKER-PE7</cbc:ID>
+            </cac:SellersItemIdentification>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="EUR">30.00</cbc:PriceAmount>
+            <cbc:BaseQuantity unitCode="EA">1</cbc:BaseQuantity>
+        </cac:Price>
+    </cac:InvoiceLine>
+    
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="EUR">2504.25</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="EUR">11925.00</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="EUR">2504.25</cbc:TaxAmount>
+            <cac:TaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>21</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="EUR">11925.00</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="EUR">11925.00</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="EUR">14429.25</cbc:TaxInclusiveAmount>
+        <cbc:PayableAmount currencyID="EUR">14429.25</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>
+</Invoice>
+

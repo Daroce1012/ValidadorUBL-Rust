@@ -112,8 +112,16 @@ export class UBLXMLParser {
             };
         }
 
-        const partyName = this.getTextContent(partyElement, 'PartyName') || this.getTextContent(partyElement, 'Name');
-        const partyIdentification = this.getTextContent(partyElement, 'ID');
+        // Buscar el Name dentro de PartyName, no directamente
+        const partyNameElement = this.findElement(partyElement, 'PartyName');
+        const partyName = partyNameElement 
+            ? this.getTextContent(partyNameElement, 'Name')
+            : this.getTextContent(partyElement, 'Name');
+        // Buscar el CompanyID dentro de PartyTaxScheme, no el ID genérico
+        const taxSchemeElement = partyElement.querySelector('PartyTaxScheme');
+        const partyIdentification = taxSchemeElement 
+            ? this.getTextContent(taxSchemeElement, 'CompanyID')
+            : this.getTextContent(partyElement, 'ID');
 
         // Extraer dirección postal
         const addressElement = partyElement.querySelector('PostalAddress');
@@ -122,7 +130,11 @@ export class UBLXMLParser {
             postalAddress.streetName = this.getTextContent(addressElement, 'StreetName') || undefined;
             postalAddress.cityName = this.getTextContent(addressElement, 'CityName') || undefined;
             postalAddress.postalZone = this.getTextContent(addressElement, 'PostalZone') || undefined;
-            postalAddress.countryCode = this.getTextContent(addressElement, 'CountryCode') || undefined;
+            // Buscar IdentificationCode dentro de Country, no CountryCode directamente
+            const countryElement = this.findElement(addressElement, 'Country');
+            postalAddress.countryCode = countryElement 
+                ? this.getTextContent(countryElement, 'IdentificationCode')
+                : this.getTextContent(addressElement, 'CountryCode') || undefined;
         }
 
         // Extraer información de contacto
@@ -169,7 +181,11 @@ export class UBLXMLParser {
 
         lineElements.forEach(lineElement => {
             const itemName = this.getTextContent(lineElement, 'Name');
-            const sellersItemId = this.getTextContent(lineElement, 'SellersItemIdentification');
+            // Buscar el ID dentro de SellersItemIdentification, no el elemento completo
+            const sellersItemElement = this.findElement(lineElement, 'SellersItemIdentification');
+            const sellersItemId = sellersItemElement 
+                ? this.getTextContent(sellersItemElement, 'ID')
+                : '';
             
             const item: UBLItem = {
                 description: this.getTextContent(lineElement, 'Description'),
@@ -200,14 +216,27 @@ export class UBLXMLParser {
      * Extrae los totales monetarios
      */
     private extractMonetaryTotals(invoiceElement: Element): UBLLegalMonetaryTotals {
-        const lineExtensionAmount = this.getNumberContent(invoiceElement, 'LineExtensionAmount');
-        const payableAmount = this.getNumberContent(invoiceElement, 'PayableAmount');
-        const allowanceTotal = this.getNumberContent(invoiceElement, 'AllowanceTotalAmount');
-        const chargeTotal = this.getNumberContent(invoiceElement, 'ChargeTotalAmount');
+        // Buscar específicamente dentro de LegalMonetaryTotal, no en todo el documento
+        const legalMonetaryElement = this.findElement(invoiceElement, 'LegalMonetaryTotal');
+        
+        if (!legalMonetaryElement) {
+            // Fallback si no existe LegalMonetaryTotal
+            return {
+                lineExtensionAmount: 0,
+                taxExclusiveAmount: 0,
+                taxInclusiveAmount: 0,
+                payableAmount: 0
+            };
+        }
+        
+        const lineExtensionAmount = this.getNumberContent(legalMonetaryElement, 'LineExtensionAmount');
+        const payableAmount = this.getNumberContent(legalMonetaryElement, 'PayableAmount');
+        const allowanceTotal = this.getNumberContent(legalMonetaryElement, 'AllowanceTotalAmount');
+        const chargeTotal = this.getNumberContent(legalMonetaryElement, 'ChargeTotalAmount');
         
         // Si no hay TaxExclusiveAmount o TaxInclusiveAmount, usar LineExtensionAmount como base
-        let taxExclusiveAmount = this.getNumberContent(invoiceElement, 'TaxExclusiveAmount');
-        let taxInclusiveAmount = this.getNumberContent(invoiceElement, 'TaxInclusiveAmount');
+        let taxExclusiveAmount = this.getNumberContent(legalMonetaryElement, 'TaxExclusiveAmount');
+        let taxInclusiveAmount = this.getNumberContent(legalMonetaryElement, 'TaxInclusiveAmount');
         
         // Si no se encuentran los campos de impuestos, usar LineExtensionAmount como fallback
         if (taxExclusiveAmount === 0 && lineExtensionAmount > 0) {

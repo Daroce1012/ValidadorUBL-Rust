@@ -65,12 +65,52 @@ export class PDFGenerator {
             const imgWidth = pageWidth - (margin * 2);
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
             
-            let yPosition = margin;
-            if (imgHeight < pageHeight - (margin * 2)) {
-                yPosition = margin + (pageHeight - margin * 2 - imgHeight) / 2;
-            }
+            // Calcular cuántas páginas se necesitan
+            const availableHeight = pageHeight - (margin * 2);
             
-            pdf.addImage(imgData, 'PNG', margin, yPosition, imgWidth, imgHeight);
+            if (imgHeight <= availableHeight) {
+                // El contenido cabe en una página
+                const yPosition = margin + (availableHeight - imgHeight) / 2;
+                pdf.addImage(imgData, 'PNG', margin, yPosition, imgWidth, imgHeight);
+            } else {
+                // El contenido necesita múltiples páginas
+                let yPosition = 0;
+                let remainingHeight = imgHeight;
+                let pageNumber = 0;
+                
+                while (remainingHeight > 0) {
+                    if (pageNumber > 0) {
+                        pdf.addPage();
+                    }
+                    
+                    // Calcular la porción de la imagen para esta página
+                    const sourceY = pageNumber * availableHeight * (canvas.height / imgHeight);
+                    const sourceHeight = Math.min(availableHeight * (canvas.height / imgHeight), canvas.height - sourceY);
+                    
+                    // Crear un canvas temporal para esta página
+                    const pageCanvas = document.createElement('canvas');
+                    pageCanvas.width = canvas.width;
+                    pageCanvas.height = sourceHeight;
+                    
+                    const ctx = pageCanvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(
+                            canvas,
+                            0, sourceY,                    // Origen en el canvas original
+                            canvas.width, sourceHeight,     // Tamaño de origen
+                            0, 0,                          // Destino en el nuevo canvas
+                            canvas.width, sourceHeight      // Tamaño de destino
+                        );
+                        
+                        const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
+                        const pageImgHeight = (sourceHeight * imgWidth) / canvas.width;
+                        pdf.addImage(pageImgData, 'PNG', margin, margin, imgWidth, pageImgHeight);
+                    }
+                    
+                    remainingHeight -= availableHeight;
+                    pageNumber++;
+                }
+            }
             
             const invoiceNumber = document.getElementById('invoiceNumber')?.textContent || 'factura';
             const fileName = `Factura_${invoiceNumber}.pdf`;
