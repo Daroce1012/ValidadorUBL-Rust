@@ -1,7 +1,9 @@
 /**
  * Clase simple para medir tiempo de cualquier operación
- * Usa Temporal API si está disponible, sino usa Date como fallback
+ * Usa Temporal API con polyfill para mayor precisión
  */
+import { Temporal } from '@js-temporal/polyfill';
+
 export class Timer {
     constructor(nombreOperacion) {
         this.nombreOperacion = nombreOperacion;

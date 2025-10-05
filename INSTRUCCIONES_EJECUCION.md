@@ -1,378 +1,61 @@
-# Instrucciones de Ejecución del Validador UBL Simplificado
+# Instrucciones de Ejecución
 
-## 📋 **INFORMACIÓN IMPORTANTE**
+## Requisitos Previos
 
-Este documento contiene **DOS SECCIONES**:
+Asegúrate de tener instalado:
 
-1. **🔧 PARTE 1: COMPILACIÓN RUST → WEBASSEMBLY** (Pasos 1-7)
-   - Para compilar el código Rust a WebAssembly
-   - Solo necesario si modificas el código Rust
-   - Si ya tienes los archivos `.wasm` compilados, puedes saltar esta parte
-
-2. **🌐 PARTE 2: EJECUTAR APLICACIÓN WEB SIMPLIFICADA** (Pasos 8-10)
-   - Para ejecutar toda la aplicación web simplificada
-   - Incluye validación, visualización y PDF
-   - **ESTA ES LA PARTE PRINCIPAL**
-
----
-
-## 🔧 **PARTE 1: COMPILACIÓN RUST → WEBASSEMBLY**
-
-> **⚠️ NOTA**: Esta sección es solo para compilar el código Rust a WebAssembly. Si ya tienes los archivos `.wasm` en la carpeta `rust/wasm-output/`, puedes saltar directamente a la **PARTE 2**.
-
-## 📋 **PASO 1: INSTALAR RUST Y XMLLINT**
-
-### 1.1 Descargar Rust
-- Ve a: https://rustup.rs/
-- Descarga el instalador para Windows
-- Ejecuta el archivo descargado
-
-### 1.2 Instalar Rust
-- Sigue las instrucciones del instalador
-- Acepta la instalación por defecto
-- **IMPORTANTE**: Reinicia la terminal/PowerShell después de la instalación
-
-### 1.3 Verificar instalación de Rust
-```bash
-rustc --version
-cargo --version
-```
-**Resultado esperado**: Debe mostrar las versiones de Rust y Cargo
-
-### 1.4 Instalar xmllint (Windows)
-**Opción A - Usando Chocolatey (RECOMENDADO):**
-```bash
-# Instalar Chocolatey si no lo tienes (ejecutar como Administrador)
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
-# Instalar libxml2 (incluye xmllint)
-choco install libxml2
-```
-
-**Opción B - Usando MSYS2:**
-```bash
-# Descargar MSYS2 desde: https://www.msys2.org/
-# Instalar y luego ejecutar en terminal MSYS2:
-pacman -S mingw-w64-x86_64-libxml2
-```
-
-**Opción C - Binarios precompilados:**
-- Descargar desde: https://www.zlatkovic.com/projects/libxml/
-- Extraer y agregar al PATH
-
-### 1.5 Verificar instalación de xmllint
-```bash
-xmllint --version
-```
-**Resultado esperado**: Debe mostrar la versión de xmllint
+| Software | Versión utilizada | Instalación |
+|----------|-------------------|-------------|
+| **Node.js** | v14.21.3 | https://nodejs.org/ |
+| **npm** | (incluido con Node.js) | - |
+| **TypeScript** | 5.9.2 | `npm install` (se instala automáticamente) |
+| **Temporal API Polyfill** | 0.5.1 | `npm install` (se instala automáticamente) |
+| **Rust** | 1.90.0 | https://rustup.rs/ |
+| **Cargo** | 1.90.0 | (incluido con Rust) |
+| **wasm-pack** | 0.13.1 | `cargo install wasm-pack` |
 
 ---
 
-## 📋 **PASO 2: COMPILAR EL PROYECTO**
+## Ejecutar la Aplicación
 
-### 2.1 Compilar para desarrollo
-```bash
-cargo build
-```
-**Resultado esperado**: Debe compilar sin errores
+1. **Instalar dependencias**:
+   ```bash
+   npm install
+   ```
+   
+   Esto instalará automáticamente:
+   - TypeScript (compilador)
+   - @js-temporal/polyfill (medición precisa de rendimiento)
 
-### 2.2 Compilar para producción (opcional)
-```bash
-cargo build --release
-```
-**Resultado esperado**: Compilación optimizada para producción
+2. **Compilar TypeScript**:
+   ```bash
+   npm run build
+   ```
 
----
-
-## 📋 **PASO 3: PROBAR LA APLICACIÓN CLI**
-
-### 3.1 Probar con archivo correcto
-```bash
-cargo run --bin validador-ubl --features cli -- ejemplos_ubl/validos/UBL-Invoice-2.1-Example.xml
-```
-**Resultado esperado**: 
-```
-✅ Factura válida: ejemplos_ubl/validos/UBL-Invoice-2.1-Example.xml
-✅ El documento UBL cumple con todos los requisitos
-```
-
-### 3.2 Probar con archivo con errores
-```bash
-cargo run --bin validador-ubl --features cli -- ejemplos_ubl/invalidos/UBL-Invoice-2.1-Invalid-XML-Syntax.xml
-```
-**Resultado esperado**: 
-```
-❌ Factura inválida: ejemplos_ubl/invalidos/UBL-Invoice-2.1-Invalid-XML-Syntax.xml
-❌ El documento UBL no cumple con los requisitos
-```
-
-### 3.3 Probar con modo verbose
-```bash
-cargo run --bin validador-ubl --features cli -- --verbose ejemplos_ubl/validos/UBL-Invoice-2.1-Example.xml
-```
-**Resultado esperado**: Información detallada del proceso
+3. **Abrir con Live Server**:
+   - Instala la extensión "Live Server" en VS Code
+   - Click derecho en `index.html` → "Open with Live Server"
 
 ---
 
-## 📋 **PASO 4: INSTALAR WASM-PACK**
+## Recompilar WebAssembly (Opcional)
 
-### 4.1 Instalar wasm-pack
-```bash
-cargo install wasm-pack
-```
-**Resultado esperado**: Instalación exitosa de wasm-pack
+Solo si necesitas modificar el código Rust:
 
----
-
-## 📋 **PASO 5: COMPILAR WEBASSEMBLY**
-
-### 5.1 Limpiar compilaciones anteriores
-```bash
-cargo clean
-```
-**Resultado esperado**: Eliminación de archivos de compilación
-
-### 5.2 Compilar para WebAssembly
-```bash
-wasm-pack build --target web --out-dir wasm-output --dev
-```
-**Resultado esperado**: 
-- Creación de archivos en carpeta `rust/wasm-output/`
-- Archivos generados: `validador_ubl.js`, `validador_ubl_bg.wasm`, etc.
+1. Instalar Rust: https://rustup.rs/
+2. Instalar wasm-pack: `cargo install wasm-pack`
+3. Compilar:
+   ```bash
+   cd rust
+   wasm-pack build --target web --out-dir wasm-output --dev
+   ```
 
 ---
 
-## 📋 **PASO 6: VERIFICAR ARCHIVOS GENERADOS**
+## Solución de Problemas
 
-### 6.1 Verificar carpeta wasm-output/
-Después de compilar, verificar que existen estos archivos:
-- `rust/wasm-output/validador_ubl.js`
-- `rust/wasm-output/validador_ubl_bg.wasm`
-- `rust/wasm-output/validador_ubl_bg.wasm.d.ts`
-- `rust/wasm-output/validador_ubl.d.ts`
-- `rust/wasm-output/package.json`
-
-### 6.2 Verificar tamaño de archivos
-- `validador_ubl_bg.wasm` debe ser de varios KB
-- `validador_ubl.js` debe ser de varios KB
-
----
-
-## 📋 **PASO 7: PROBAR APLICACIÓN WEB**
-
-### 7.1 Abrir aplicación web
-- Abrir `index.html` en el navegador
-- Debe cargar sin errores en la consola
-
-### 7.2 Probar validación
-- Subir archivo XML válido → Debe mostrar "Válido"
-- Subir archivo XML inválido → Debe mostrar error específico
-
----
-
-## 🔧 **COMANDOS ÚTILES ADICIONALES**
-
-### Verificar compilación sin errores
-```bash
-cargo check
-```
-
-### Ejecutar tests (si existen)
-```bash
-cargo test
-```
-
-### Limpiar todo y recompilar
-```bash
-cargo clean
-cargo build
-wasm-pack build --target web --out-dir wasm-output --dev
-```
-
-### Ver ayuda del CLI
-```bash
-cargo run --bin validador-ubl --features cli -- --help
-```
-
----
-
-## 🚨 **SOLUCIÓN DE PROBLEMAS**
-
-### Error: "rustc no se reconoce"
-- **Solución**: Rust no está instalado o no está en el PATH
-- **Acción**: Reinstalar Rust y reiniciar terminal
-- **Alternativa**: Si Rust está instalado pero no funciona, ejecutar: `$env:PATH += ";$env:USERPROFILE\.cargo\bin"`
-
-### Error: "cargo no se reconoce"
-- **Solución**: Cargo no está instalado
-- **Acción**: Reinstalar Rust (cargo viene incluido)
-
-### Error: "wasm-pack no se reconoce"
-- **Solución**: wasm-pack no está instalado
-- **Acción**: Ejecutar `cargo install wasm-pack`
-
-### Error de compilación
-- **Solución**: Verificar que todos los archivos Rust estén correctos
-- **Acción**: Ejecutar `cargo check` para ver errores específicos
-
-### Error: "target `validador-ubl` requires the features: `cli`"
-- **Solución**: Falta especificar la feature CLI
-- **Acción**: Agregar `--features cli` a los comandos de cargo run
-
-### Error: "Error ejecutando xmllint. ¿Está instalado xmllint?"
-- **Solución**: xmllint no está instalado o no está en el PATH
-- **Acción**: Instalar xmllint usando una de las opciones del PASO 1.4
-- **Verificación**: Ejecutar `xmllint --version` para confirmar instalación
-
-### Error: "xmllint no se reconoce como comando"
-- **Solución**: xmllint no está en el PATH del sistema
-- **Acción**: 
-  1. Encontrar la ubicación de xmllint (normalmente en `C:\ProgramData\chocolatey\lib\libxml2\tools\bin\`)
-  2. Agregar la ruta al PATH del sistema
-  3. Reiniciar la terminal
-- **Alternativa**: Usar la ruta completa en el código si es necesario
-
----
-
-## 📝 **NOTAS IMPORTANTES**
-
-1. **Siempre reiniciar la terminal** después de instalar Rust
-2. **Ejecutar comandos desde la carpeta del proyecto**
-3. **Verificar que todos los archivos de ejemplo existan** antes de probar
-4. **El WebAssembly se regenera cada vez** que se ejecuta `wasm-pack build`
-5. **Los archivos en `wasm-output/` reemplazan automáticamente** los existentes
-6. **xmllint es necesario** para validación XSD - instalar antes de compilar
-7. **xmllint debe estar en el PATH** del sistema para funcionar correctamente
-
----
-
-## 🌐 **PARTE 2: EJECUTAR APLICACIÓN WEB SIMPLIFICADA**
-
-> **🎯 ESTA ES LA PARTE PRINCIPAL** - Para ejecutar toda la aplicación web simplificada (validación + visualización + PDF)
-
-## 📋 **PASO 8: INSTALAR NODE.JS**
-
-### 8.1 Descargar Node.js
-- Ve a: https://nodejs.org/
-- Descarga la versión LTS (recomendada)
-- Ejecuta el instalador
-
-### 8.2 Verificar instalación
-```bash
-node --version
-npm --version
-```
-**Resultado esperado**: Debe mostrar las versiones de Node.js y npm
-
----
-
-## 📋 **PASO 9: INSTALAR DEPENDENCIAS Y COMPILAR**
-
-### 9.1 Instalar dependencias
-```bash
-npm install
-```
-**Resultado esperado**: Instalación de TypeScript y dependencias
-
-### 9.2 Compilar TypeScript
-```bash
-npx tsc
-```
-**Resultado esperado**: 
-- Creación de archivos en carpeta `compiled/`
-- Archivos generados: `modules.js`, `visualizer.js`, `pdf-generator.js`, etc.
-
----
-
-## 📋 **PASO 10: EJECUTAR APLICACIÓN WEB SIMPLIFICADA**
-
-### 10.1 Abrir con Live Server (RECOMENDADO)
-1. **Abrir VS Code** en la carpeta del proyecto
-2. **Instalar extensión Live Server** (si no la tienes)
-3. **Click derecho en `index.html`**
-4. **Seleccionar "Open with Live Server"**
-5. **Se abrirá automáticamente** en el navegador
-
-### 10.2 Alternativa: Servidor HTTP simple
-```bash
-# Si tienes Python instalado:
-python -m http.server 8000
-
-# Si tienes Node.js:
-npx serve -s . -l 8000
-
-# Luego abrir: http://localhost:8000
-```
-
-### 10.3 Probar la aplicación simplificada
-1. **Arrastrar archivo XML UBL** a la zona de carga
-2. **Click "Validar Documento"** para verificar
-3. **Click "Visualizar Factura"** para ver datos
-4. **Click "Descargar PDF"** para generar documento
-
----
-
-## 🚨 **SOLUCIÓN DE PROBLEMAS - APLICACIÓN WEB**
-
-### Error: "Módulo de visualización no disponible"
-- **Causa**: No se está ejecutando desde servidor HTTP
-- **Solución**: Usar Live Server en VS Code (no abrir HTML directamente)
-
-### Error: "Failed to fetch"
-- **Causa**: Archivos WebAssembly no encontrados
-- **Solución**: Verificar que existe `rust/wasm-output/validador_ubl.js`
-
-### Error: "TypeScript compilation failed"
-- **Causa**: Errores en código TypeScript
-- **Solución**: Ejecutar `npx tsc` y revisar errores
-
-### Error: "Cannot resolve module"
-- **Causa**: Dependencias no instaladas
-- **Solución**: Ejecutar `npm install`
-
----
-
-## 📝 **NOTAS IMPORTANTES - APLICACIÓN WEB SIMPLIFICADA**
-
-1. **Siempre usar Live Server** - No abrir HTML directamente
-2. **Verificar que WebAssembly esté compilado** - Archivos en `rust/wasm-output/`
-3. **Compilar TypeScript** antes de ejecutar - `npx tsc`
-4. **Usar navegador moderno** - Chrome, Firefox, Safari, Edge
-5. **Archivos de ejemplo** están en `ejemplos_ubl/` para probar
-
----
-
-## 🎯 **NUEVA ESTRUCTURA SIMPLIFICADA**
-
-### **📁 Archivos Principales:**
-```
-ValidadorUBL/
-├── main.js                    # ✅ Punto de entrada simplificado
-├── app-controller-unified.js  # ✅ Controlador unificado
-├── index.html                 # ✅ Interfaz actualizada
-├── styles.css                 # ✅ Estilos CSS
-├── package.json               # ✅ Dependencias
-├── tsconfig.json              # ✅ Configuración TypeScript
-│
-├── typescript/                # ✅ Solo archivos simplificados
-│   ├── xml-parser.ts         # ✅ Parser simplificado
-│   ├── visualizer.ts         # ✅ Visualizador simplificado
-│   ├── pdf-generator.ts      # ✅ Generador PDF simplificado
-│   ├── invoice-formatter.ts  # ✅ Formateador simplificado
-│   └── types.ts              # ✅ Tipos esenciales
-│
-├── compiled/                  # ✅ Compilados desde cero
-│   ├── modules.js            # ✅ Módulo unificado
-│   └── ...archivos compilados
-│
-└── rust/                     # ✅ Validador WebAssembly
-    └── wasm-output/          # ✅ WebAssembly compilado
-```
-
-### **🚀 Beneficios de la Simplificación:**
-- **-40% líneas de código** sin perder funcionalidad
-- **-60% archivos** para mantener
-- **-50% complejidad** de la arquitectura
-- **Misma calidad de validaciones** UBL con WebAssembly
-- **Mejor mantenibilidad** con código más limpio
-- **Misma funcionalidad completa**: validación, visualización y PDF
+| Error | Solución |
+|-------|----------|
+| "Cannot use import statement" | Usar Live Server, no abrir HTML directamente |
+| "Cannot find module" | Ejecutar `npm run build` |
+| "tsc no se reconoce" | Ejecutar `npm install` |
