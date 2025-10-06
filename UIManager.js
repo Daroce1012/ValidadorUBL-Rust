@@ -34,15 +34,22 @@ export class UIManager {
         const pageElement = this.elements[pageId + 'Page'];
         if (!pageElement) return;
         
-        pageElement.style.display = show ? 'block' : 'none';
-        pageElement.classList.toggle('hidden', !show);
+        if (show) {
+            pageElement.classList.remove('hidden');
+        } else {
+            pageElement.classList.add('hidden');
+        }
     }
 
     // Alterna la visibilidad de un elemento
     toggleElement(elementId, show) {
         const element = this.elements[elementId];
         if (element) {
-            element.style.display = show ? 'block' : 'none';
+            if (show) {
+                element.classList.remove('hidden');
+            } else {
+                element.classList.add('hidden');
+            }
         }
     }
 
@@ -71,14 +78,14 @@ export class UIManager {
         if (this.elements.validationResult) {
             this.elements.validationResult.textContent = message;
             this.elements.validationResult.className = `result ${type}`;
-            this.elements.validationResult.style.display = 'block';
+            this.elements.validationResult.classList.remove('hidden');
         }
     }
 
     // Oculta el resultado de una operación
     hideResult() {
         if (this.elements.validationResult) {
-            this.elements.validationResult.style.display = 'none';
+            this.elements.validationResult.classList.add('hidden');
         }
     }
 
@@ -102,16 +109,14 @@ export class UIManager {
     // Habilita el área de carga
     enableUploadArea() {
         if (this.elements.uploadArea) {
-            this.elements.uploadArea.style.pointerEvents = 'auto';
-            this.elements.uploadArea.style.opacity = '1';
+            this.elements.uploadArea.classList.remove('disabled');
         }
     }
 
     // Deshabilita el área de carga
     disableUploadArea() {
         if (this.elements.uploadArea) {
-            this.elements.uploadArea.style.pointerEvents = 'none';
-            this.elements.uploadArea.style.opacity = '0.5';
+            this.elements.uploadArea.classList.add('disabled');
         }
     }
 

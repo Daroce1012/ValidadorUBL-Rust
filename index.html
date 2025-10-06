@@ -31,13 +31,13 @@
                         <p>o</p>
                         <p>
                             <button class="upload-btn" id="uploadBtn">Seleccionar archivo</button>
-                            <input type="file" id="fileInput" accept=".xml,text/xml" style="display: none;">
+                            <input type="file" id="fileInput" accept=".xml,text/xml" class="hidden">
                         </p>
                         <p class="file-info">Formatos soportados: XML (.xml)</p>
                     </section>
                     
                     <!-- Información del archivo cargado -->
-                    <section class="file-preview" id="filePreview" style="display: none;">
+                    <section class="file-preview hidden" id="filePreview">
                         <h5 class="visually-hidden">Vista previa del archivo</h5>
                         <article class="preview-card">
                             <h6>📄 Archivo seleccionado</h6>
@@ -52,10 +52,10 @@
                 </section>
 
                 <!-- Resultado de validación -->
-                <output id="validationResult" class="result" style="display: none;"></output>
+                <output id="validationResult" class="result hidden"></output>
 
                 <!-- Sección de error -->
-                <section class="error-section" id="errorSection" style="display: none;">
+                <section class="error-section hidden" id="errorSection">
                     <h4 class="visually-hidden">Mensajes de error</h4>
                     <article class="error-card">
                         <h5>❌ Error al procesar el archivo</h5>
@@ -66,7 +66,7 @@
             </section>
 
             <!-- PÁGINA 2: Visualización de factura -->
-            <section class="page" id="visualizationPage" style="display: none;">
+            <section class="page hidden" id="visualizationPage">
                 <h3 class="visually-hidden">Visualización de factura</h3>
                 <section class="invoice-section">
                     <header class="invoice-header">
@@ -88,7 +88,7 @@
                     </header>
                     
                     <!-- Estado de validación en la visualización -->
-                    <section class="validation-status" id="validationStatus" style="display: none;">
+                    <section class="validation-status hidden" id="validationStatus">
                         <h5 class="visually-hidden">Estado de validación</h5>
                     </section>
                     
@@ -163,13 +163,11 @@
             <p>Validador y Visualizador UBL - Desarrollado con TypeScript y WebAssembly</p>
             <p class="validation-badges">
                 <a href="https://jigsaw.w3.org/css-validator/check/referer">
-                    <img style="border:0;width:88px;height:31px"
-                        src="https://jigsaw.w3.org/css-validator/images/vcss"
+                    <img src="https://jigsaw.w3.org/css-validator/images/vcss"
                         alt="Valid CSS!">
                 </a>
                 <a href="https://jigsaw.w3.org/css-validator/check/referer">
-                    <img style="border:0;width:88px;height:31px"
-                        src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+                    <img src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
                         alt="Valid CSS!">
                 </a>
             </p>
